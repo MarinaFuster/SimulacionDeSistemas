@@ -9,6 +9,8 @@
 *.zip
 *.tar.gz
 *.rar
+*.idea*
+*.iml
 
 *target
 *dependency-reduced-pom.xml
