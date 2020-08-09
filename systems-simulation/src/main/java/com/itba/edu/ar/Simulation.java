@@ -7,10 +7,7 @@ import com.itba.edu.ar.config.StaticConfig;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Simulation {
     private int time = 0;
@@ -56,16 +53,7 @@ public class Simulation {
                 }
             }
             if (appConfig.printInteractionsList) {
-                FileWriter interactFw = new FileWriter(outputFolder + "InteractionList" + time + ".txt");
-                PrintWriter interactPw = new PrintWriter(interactFw);
-                for (Map.Entry<Integer, Set<Integer>> entry : interactions.entrySet()) {
-                    interactPw.print(entry.getKey());
-                    for (Integer i : entry.getValue()) {
-                        interactPw.print(", " + i);
-                    }
-                    interactPw.println();
-                }
-                interactFw.close();
+                printInteractionList(outputFolder, interactions);
             }
             time++;
             if (time % App.getStaticConfig().getTimePartition() == 0) {
@@ -77,6 +65,31 @@ public class Simulation {
         }
         fw.close();
 
+    }
+
+    public void printInteractionList(String outputFolder, Map<Integer, Set<Integer>> interactions) throws  IOException {
+        FileWriter interactFw = new FileWriter(outputFolder + "InteractionList" + time + ".txt");
+        PrintWriter interactPw = new PrintWriter(interactFw);
+
+        Map<Integer, Set<Integer>> orderedInteractions = new TreeMap<>(interactions);
+        for (int i = 0; i < particleMap.size(); i++) {
+            orderedInteractions.computeIfAbsent(i, k -> new HashSet<>());
+        }
+
+        for (Map.Entry<Integer, Set<Integer>> entry : orderedInteractions.entrySet()) {
+
+            boolean first = true;
+            for (Integer i : entry.getValue()) {
+                if (first) {
+                    interactPw.print(i);
+                    first = false;
+                } else{
+                    interactPw.print("," + i);
+                }
+            }
+            interactPw.println();
+        }
+        interactFw.close();
     }
 
     public void addInteractions(Map<Integer,Set<Integer>> interactions, CellIndexMethod cim, int x1, int y1, int x2, int y2) {
@@ -111,7 +124,7 @@ public class Simulation {
 
                     interactions.get(id1).add(id2);
                     interactions.get(id2).add(id1);
-                    System.out.printf("%d interacts with %d!\n",id1,id2);
+//                    System.out.printf("%d interacts with %d!\n",id1,id2);
                 }
 
             }
