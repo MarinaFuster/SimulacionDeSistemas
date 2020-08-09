@@ -40,20 +40,21 @@ class SystemConfiguration():
     def __init__(self, static_path):
         f = open(static_path, 'r')
         lines = f.readlines()
-        self.t = int(lines[0])
-        self.N = int(lines[1])
-        self.L = int(lines[2])
+        self.t = float(lines[0])
+        self.N = float(lines[1])
+        self.L = float(lines[2])
         self.M = int(lines[3])
-        self.rc = int(lines[4])
+        self.rc = float(lines[4])
         self.B = False if int(lines[5]) == 0 else True
 
         self.particles = []
         for i in range(6, lines.__len__()):
             particle_info = lines[i].split(',', 1)
-            aux_props = particle_info[1].split(',')
             properties = []
-            for prop in aux_props:
-                properties.append(float(prop))
+            if particle_info.__len__() > 1:
+                aux_props = particle_info[1].split(',')
+                for prop in aux_props:
+                    properties.append(float(prop))
             self.particles.append(Particle(float(particle_info[0]), properties))
         f.close()
 
@@ -61,7 +62,7 @@ class SystemConfiguration():
         f = open(dynamic_path, 'r')
         lines = f.readlines()
 
-        self.particles_time = int(lines[0])
+        self.particles_time = float(lines[0])
         for i in range(1, lines.__len__()):
             coords = lines[i].split(',')
             position = Point(float(coords[0]), float(coords[1]))
