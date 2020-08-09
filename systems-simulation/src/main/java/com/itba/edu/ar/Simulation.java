@@ -36,7 +36,7 @@ public class Simulation {
         while (time <= appConfig.maxTime) {
             pw.println(time);
             for (Particle p : particleMap.values()) {
-                pw.printf("%f %f %f %f\n", p.getPosition().getX(), p.getPosition().getY(), p.getSpeed().getX(), p.getSpeed().getY());
+                pw.printf("%f,%f,%f,%f\n", p.getPosition().getX(), p.getPosition().getY(), p.getSpeed().getX(), p.getSpeed().getY());
             }
 
             // Calculate interactions
