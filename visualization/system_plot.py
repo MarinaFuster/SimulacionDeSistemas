@@ -90,29 +90,39 @@ def plot_particles_in_space(system, grid=False):
 
     plt.show()
 
-def plot_neighbours(system, particle):
+def plot_neighbours(system, particle_number):
     L = system.L
     M = system.M
 
     fig, ax = plt.subplots()
 
+    particle = system.particles[particle_number]
+
     plot_limits(L)
+
+    # Plot desired particle
     if system.B == False: 
         plot_particles(ax, system.particles)
-        
-        # Plot neighbours
         plot_particle(ax, particle.position.x, particle.position.y, particle.ratio, color='#370516', fill=True)
-        for neigh in particle.neighbours:
-            particle = system.particles[neigh]
-            plot_particle(ax, particle.position.x, particle.position.y, particle.ratio, color='#FF216E', fill=True)
     else: 
         plot_particles_periodic_contours(L, ax, system.particles)
-
-        # Plot neighbours
         plot_out_of_limits_particle(L, ax, particle, color='#370516', fill=True)
-        for neigh in particle.neighbours:
-            p = system.particles[neigh]
-            if is_out_of_limit(L, p): plot_out_of_limits_particle(L, ax, p, color='#FF216E', fill=True)
-            else: plot_particle(ax, p.position.x, p.position.y, p.ratio, color='#FF216E', fill=True)
-            
+
+    if particle.neighbours.__len__() == 0:
+        plt.title("Particle {} has no neighbours".format(particle_number))
+    else:   # Plot neighbours
+        neighbours_qty = particle.neighbours.__len__()
+        plt.title("Particle {} has {} neighbour{}".format(
+            particle_number, neighbours_qty, "s" if neighbours_qty > 1 else ""))
+        if system.B == False:
+            for neigh in particle.neighbours:
+                particle = system.particles[neigh]
+                plot_particle(
+                    ax, particle.position.x, particle.position.y, particle.ratio, color='#FF216E', fill=True)
+        else:
+            for neigh in particle.neighbours:
+                p = system.particles[neigh]
+                if is_out_of_limit(L, p): plot_out_of_limits_particle(L, ax, p, color='#FF216E', fill=True)
+                else: plot_particle(ax, p.position.x, p.position.y, p.ratio, color='#FF216E', fill=True)
+
     plt.show()

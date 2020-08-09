@@ -11,12 +11,13 @@ class Particle():
     def __init__(self, ratio, properties):
         self.ratio = ratio
         self.properties = properties
+        self.neighbours = []
     
     def dynamic(self, position, velocity):
         self.position = position
         self.velocity = velocity
     
-    def neighbours(self, neighbours):
+    def set_neighbours(self, neighbours):
         self.neighbours = neighbours
     
     def __str__(self):
@@ -76,7 +77,7 @@ class SystemConfiguration():
             neighbours = []
             for neigh in aux_neighbours:
                 neighbours.append(int(neigh))
-            self.particles[i].neighbours(neighbours)
+            self.particles[i].set_neighbours(neighbours)
 
     def __str__(self):
         r = "System's static configuration\n"
