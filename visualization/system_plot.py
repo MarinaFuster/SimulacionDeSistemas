@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from system_configuration import Particle
 
 def plot_limits(L):
     plt.xlim(0, L)
@@ -106,6 +107,8 @@ def plot_neighbours(system, particle_number):
     n_color = system.config['neighbours_plot']['neighbours_color']
     p_fill = system.config['neighbours_plot']['fill_particle']
     n_fill = system.config['neighbours_plot']['fill_neighbours']
+    r_color = '#ADA1AB'
+    r_fill = False
 
     fig, ax = plt.subplots()
 
@@ -117,9 +120,16 @@ def plot_neighbours(system, particle_number):
     if system.B == False: 
         plot_particles(ax, system.particles)
         plot_particle(ax, particle.position.x, particle.position.y, particle.ratio, color=p_color, fill=p_fill)
+        # Plots radius
+        plot_particle(
+            ax, particle.position.x, particle.position.y, particle.ratio + system.rc, color=r_color, fill=r_fill)
     else: 
         plot_particles_periodic_contours(L, ax, system.particles)
         plot_out_of_limits_particle(L, ax, particle, color=p_color, fill=p_fill)
+        # Plots radius
+        p = Particle(particle.ratio + system.rc, particle.properties)
+        p.dynamic(p.position, p.velocity)
+        plot_out_of_limits_particle(L, ax, p, color=r_color, fill=r_fill)
 
     if particle.neighbours.__len__() == 0:
         plt.title("Particle {} has no neighbours".format(particle_number))
