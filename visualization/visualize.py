@@ -7,7 +7,8 @@ def main():
     system.dynamic_configuration('Dynamic100.txt')
     system.neighbours_configuration('AlgunosVecinos_100_rc6.txt')
 
-    plot_neighbours(system, system.particles[2])
+    plot_particles_in_space(system)
+    # plot_neighbours(system, system.particles[2])
 
 if __name__ == '__main__':
     main()

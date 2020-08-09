@@ -33,7 +33,7 @@ class Particle():
         if self.neighbours.__len__() > 0:
             print("Neighbours: {}".format(self.neighbours))
         else:
-            print("Not neighbours at the time")
+            print("This particle does not have neighbours at the time")
 
 class SystemConfiguration():
     def __init__(self, static_path):
