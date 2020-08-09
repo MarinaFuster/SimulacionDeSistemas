@@ -88,10 +88,11 @@ class SystemConfiguration():
         lines = f.readlines()
 
         for i in range(0, lines.__len__()):
-            aux_neighbours = lines[i].split(',')
             neighbours = []
-            for neigh in aux_neighbours:
-                neighbours.append(int(neigh))
+            if lines[i] != '\n':
+                aux_neighbours = lines[i].split(',')
+                for neigh in aux_neighbours:
+                    neighbours.append(int(neigh))
             self.particles[i].set_neighbours(neighbours)
         
         f.close()

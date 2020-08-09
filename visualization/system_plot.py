@@ -94,6 +94,11 @@ def plot_particles_in_space(system, grid=False):
     plt.show()
 
 def plot_neighbours(system, particle_number):
+
+    if (particle_number < 0 or particle_number > system.N):
+        print("There is no particle {}".format(particle_number))
+        return
+
     L = system.L
     M = system.M
 
