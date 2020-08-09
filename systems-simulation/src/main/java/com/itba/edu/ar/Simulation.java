@@ -58,7 +58,6 @@ public class Simulation {
             if (appConfig.printInteractionsList) {
                 FileWriter interactFw = new FileWriter(outputFolder + "InteractionList" + time + ".txt");
                 PrintWriter interactPw = new PrintWriter(interactFw);
-
                 for (Map.Entry<Integer, Set<Integer>> entry : interactions.entrySet()) {
                     interactPw.print(entry.getKey());
                     for (Integer i : entry.getValue()) {
@@ -66,12 +65,15 @@ public class Simulation {
                     }
                     interactPw.println();
                 }
+                interactFw.close();
             }
             time++;
             if (time % App.getStaticConfig().getTimePartition() == 0) {
                 fw.close();
                 fw = new FileWriter(outputFolder + time + ".txt");
             }
+
+
         }
         fw.close();
 
@@ -102,12 +104,14 @@ public class Simulation {
 
         for (Integer id1 : cell1) {
             for (Integer id2 : cell2) {
+                if (id1 == id2) continue;
                 if (particleMap.get(id1).interacts(particleMap.get(id2))) {
                     interactions.computeIfAbsent(id1, k -> new HashSet<>());
                     interactions.computeIfAbsent(id2, k -> new HashSet<>());
 
                     interactions.get(id1).add(id2);
                     interactions.get(id2).add(id1);
+                    System.out.printf("%d interacts with %d!\n",id1,id2);
                 }
 
             }
