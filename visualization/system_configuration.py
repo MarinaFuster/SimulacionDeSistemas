@@ -37,7 +37,16 @@ class Particle():
             print("This particle does not have neighbours at the time")
 
 class SystemConfiguration():
-    def __init__(self, static_path):
+    def __init__(self, config):
+
+        self.config = config
+        self.static_configuration()
+        self.dynamic_configuration()
+        self.neighbours_configuration()
+
+    def static_configuration(self):
+        static_path = self.config['paths']['static_path']
+        
         f = open(static_path, 'r')
         lines = f.readlines()
         self.t = float(lines[0])
@@ -56,9 +65,11 @@ class SystemConfiguration():
                 for prop in aux_props:
                     properties.append(float(prop))
             self.particles.append(Particle(float(particle_info[0]), properties))
+        
         f.close()
 
-    def dynamic_configuration(self, dynamic_path):
+    def dynamic_configuration(self):
+        dynamic_path = self.config['paths']['dynamic_path']
         f = open(dynamic_path, 'r')
         lines = f.readlines()
 
@@ -68,9 +79,12 @@ class SystemConfiguration():
             position = Point(float(coords[0]), float(coords[1]))
             velocity = Point(float(coords[2]), float(coords[3])) if coords.__len__() > 2 else None
             self.particles[i-1].dynamic(position, velocity)
+
+        f.close()
     
-    def neighbours_configuration(self, neighbour_list_path):
-        f = open(neighbour_list_path, 'r')
+    def neighbours_configuration(self):
+        interaction_path = self.config['paths']['interaction_path']
+        f = open(interaction_path, 'r')
         lines = f.readlines()
 
         for i in range(0, lines.__len__()):
@@ -79,6 +93,8 @@ class SystemConfiguration():
             for neigh in aux_neighbours:
                 neighbours.append(int(neigh))
             self.particles[i].set_neighbours(neighbours)
+        
+        f.close()
 
     def __str__(self):
         r = "System's static configuration\n"

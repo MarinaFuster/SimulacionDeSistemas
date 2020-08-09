@@ -73,7 +73,7 @@ def plot_space(system, grid=True):
     fig, ax = plt.subplots()
 
     plot_limits(L)
-    if grid: plot_grid(L, M)
+    if grid: plot_grid(L, M, color=system.config["space_plot"]["grid_color"])
 
     plt.suptitle("System's Space\nSpace area: {}, Cell quantity: {}".format(L*L, M*M))
     plt.show()
@@ -84,15 +84,23 @@ def plot_particles_in_space(system, grid=False):
 
     fig, ax = plt.subplots()
 
+    color = system.config["particles_plot"]["color"]
+    fill = system.config["particles_plot"]["fill"]
+
     plot_limits(L)
-    if system.B == False: plot_particles(ax, system.particles)
-    else: plot_particles_periodic_contours(L, ax, system.particles)
+    if system.B == False: plot_particles(ax, system.particles, color=color, fill=fill)
+    else: plot_particles_periodic_contours(L, ax, system.particles, color=color, fill=fill)
 
     plt.show()
 
 def plot_neighbours(system, particle_number):
     L = system.L
     M = system.M
+
+    p_color = system.config['neighbours_plot']['particle_color']
+    n_color = system.config['neighbours_plot']['neighbours_color']
+    p_fill = system.config['neighbours_plot']['fill_particle']
+    n_fill = system.config['neighbours_plot']['fill_neighbours']
 
     fig, ax = plt.subplots()
 
@@ -103,10 +111,10 @@ def plot_neighbours(system, particle_number):
     # Plot desired particle
     if system.B == False: 
         plot_particles(ax, system.particles)
-        plot_particle(ax, particle.position.x, particle.position.y, particle.ratio, color='#370516', fill=True)
+        plot_particle(ax, particle.position.x, particle.position.y, particle.ratio, color=p_color, fill=p_fill)
     else: 
         plot_particles_periodic_contours(L, ax, system.particles)
-        plot_out_of_limits_particle(L, ax, particle, color='#370516', fill=True)
+        plot_out_of_limits_particle(L, ax, particle, color=p_color, fill=p_fill)
 
     if particle.neighbours.__len__() == 0:
         plt.title("Particle {} has no neighbours".format(particle_number))
@@ -118,11 +126,11 @@ def plot_neighbours(system, particle_number):
             for neigh in particle.neighbours:
                 particle = system.particles[neigh]
                 plot_particle(
-                    ax, particle.position.x, particle.position.y, particle.ratio, color='#FF216E', fill=True)
+                    ax, particle.position.x, particle.position.y, particle.ratio, color=n_color, fill=n_fill)
         else:
             for neigh in particle.neighbours:
                 p = system.particles[neigh]
-                if is_out_of_limit(L, p): plot_out_of_limits_particle(L, ax, p, color='#FF216E', fill=True)
-                else: plot_particle(ax, p.position.x, p.position.y, p.ratio, color='#FF216E', fill=True)
+                if is_out_of_limit(L, p): plot_out_of_limits_particle(L, ax, p, color=n_color, fill=n_fill)
+                else: plot_particle(ax, p.position.x, p.position.y, p.ratio, color=n_color, fill=n_fill)
 
     plt.show()

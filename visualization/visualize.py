@@ -1,9 +1,13 @@
-import tkinter as tk
+import json
 import matplotlib.pyplot as plt
+import tkinter as tk
+import os
 from tkinter import *
 from tkinter import ttk, font
 from system_plot import plot_space, plot_particles_in_space, plot_neighbours
 from system_configuration import SystemConfiguration
+
+current_path = os.path.dirname(os.path.realpath(__file__))
 
 class Application():
     def __init__(self, system):
@@ -62,11 +66,10 @@ class Application():
         self.particle_box.focus_set()
 
 def main():
-    # system = SystemConfiguration('Static100.txt')
-    # system.dynamic_configuration('Dynamic100.txt')
-    # system.neighbours_configuration('AlgunosVecinos_100_rc6.txt')
-
-    # app = Application(system)
+    with open(current_path + "/config.json") as f:
+        config = json.load(f)
+        system = SystemConfiguration(config)
+        app = Application(system)
 
 if __name__ == '__main__':
     main()

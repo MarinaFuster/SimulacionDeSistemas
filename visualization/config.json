@@ -1,0 +1,20 @@
+{
+    "paths": {
+        "static_path": "staticConfigOutput.txt",
+        "dynamic_path": "0.txt",
+        "interaction_path": "InteractionList0.txt"
+    },
+    "space_plot": {
+        "grid_color": "#E6E6E6"
+    },
+    "particles_plot": {
+        "color": "#90AFAF",
+        "fill": 0
+    },
+    "neighbours_plot": {
+        "particle_color": "#370516",
+        "fill_particle": 1,
+        "neighbours_color": "#FF216E",
+        "fill_neighbours": 1
+    }
+}
