@@ -24,7 +24,7 @@ public class App
 //        try  {
 //            FileWriter fw = new FileWriter("timeDifferentNandM.txt");
 //            PrintWriter pw = new PrintWriter(fw);
-//                for (int i = 100; i <= 1000; i++) {
+//                for (int i = 100; i <= 1000; i+= 100) {
 //                    try {
 //                        for (int j = 1; j < 1000; j++) {
 //                            long time = timeDifferentCellSidesAndSampleSize(j,i);
@@ -40,7 +40,7 @@ public class App
 //            System.out.println(ex.getMessage());
 //        }
 
-        runConfigWithStdInput();
+//        runConfigWithStdInput();
     }
 
 
