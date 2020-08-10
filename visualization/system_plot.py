@@ -15,6 +15,7 @@ def plot_grid(L, M, color='#E6E6E6'):
             plt.plot(horiz_x, horiz_y, vert_x, vert_y, color=color, linestyle='-')
 
 def plot_particle(ax, x, y, r, color='#90AFAF', fill=False):
+    r = r if r >= 0.1 else 0.1
     c = plt.Circle((x,y), r, color=color, fill=fill)
     ax.add_artist(c)
 
@@ -63,8 +64,7 @@ def plot_particles_periodic_contours(L, ax, particles, color='#90AFAF', fill=Fal
         if is_out_of_limit(L, p):
            plot_out_of_limits_particle(L, ax, p, color=color, fill=fill)
         else:
-            circle = plt.Circle((p.position.x, p.position.y), p.ratio, color=color, fill=fill)
-            ax.add_artist(circle)
+            plot_particle(ax, p.position.x, p.position.y, color=color, fill=fill)
 
 # Plots space of the system where the particles will be
 def plot_space(system, grid=True):
