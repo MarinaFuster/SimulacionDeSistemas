@@ -40,7 +40,7 @@ public class App
 //            System.out.println(ex.getMessage());
 //        }
 
-//        runConfigWithStdInput();
+       runConfigWithStdInput();
     }
 
 
