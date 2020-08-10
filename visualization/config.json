@@ -15,6 +15,7 @@
         "particle_color": "#370516",
         "fill_particle": 1,
         "neighbours_color": "#FF216E",
-        "fill_neighbours": 1
+        "fill_neighbours": 1, 
+        "plot_rc": 1
     }
 }

@@ -76,7 +76,7 @@ def plot_space(system, grid=True):
     plot_limits(L)
     if grid: plot_grid(L, M, color=system.config["space_plot"]["grid_color"])
 
-    plt.suptitle("System's Space\nSpace area: {}, Cell quantity: {}".format(L*L, M*M))
+    plt.suptitle("System's Space\nSpace area: {} (L={}), Cells: {} (M={})".format(L*L, L, M*M, M))
     plt.show()
 
 def plot_particles_in_space(system, grid=False):
@@ -84,6 +84,7 @@ def plot_particles_in_space(system, grid=False):
     M = system.M
 
     fig, ax = plt.subplots()
+    plt.suptitle("System's Particles\n(N={})".format(system.particles.__len__()))
 
     color = system.config["particles_plot"]["color"]
     fill = system.config["particles_plot"]["fill"]
@@ -107,6 +108,7 @@ def plot_neighbours(system, particle_number):
     n_color = system.config['neighbours_plot']['neighbours_color']
     p_fill = system.config['neighbours_plot']['fill_particle']
     n_fill = system.config['neighbours_plot']['fill_neighbours']
+    plot_rc = True if system.config['neighbours_plot']['plot_rc'] == 1 else False
     r_color = '#ADA1AB'
     r_fill = False
 
@@ -121,15 +123,16 @@ def plot_neighbours(system, particle_number):
         plot_particles(ax, system.particles)
         plot_particle(ax, particle.position.x, particle.position.y, particle.ratio, color=p_color, fill=p_fill)
         # Plots radius
-        plot_particle(
+        if plot_rc: plot_particle(
             ax, particle.position.x, particle.position.y, particle.ratio + system.rc, color=r_color, fill=r_fill)
     else: 
         plot_particles_periodic_contours(L, ax, system.particles)
         plot_out_of_limits_particle(L, ax, particle, color=p_color, fill=p_fill)
         # Plots radius
-        p = Particle(particle.ratio + system.rc, particle.properties)
-        p.dynamic(particle.position, particle.velocity)
-        plot_out_of_limits_particle(L, ax, p, color=r_color, fill=r_fill)
+        if plot_rc:
+            p = Particle(particle.ratio + system.rc, particle.properties)
+            p.dynamic(particle.position, particle.velocity)
+            plot_out_of_limits_particle(L, ax, p, color=r_color, fill=r_fill)
 
     if particle.neighbours.__len__() == 0:
         plt.title("Particle {} has no neighbours".format(particle_number))
