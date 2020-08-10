@@ -95,16 +95,14 @@ public class Simulation {
     public void addInteractions(Map<Integer,Set<Integer>> interactions, CellIndexMethod cim, int x1, int y1, int x2, int y2) {
         // First, check that both points are in the cell map
         StaticConfig config = App.getStaticConfig();
-        int maxX = config.getCellsPerSide() - 1;
-        int maxY = config.getCellsPerSide() - 1;
+        int cps = config.getCellsPerSide();
+        int maxX = cps - 1;
+        int maxY = cps - 1;
 
-        // Check boundaries for closed)
         if(config.getBoundaryMethod() == Boundary.CLOSED) {
             if (x2 == -1 || y2 == -1) return;
             if (x2 > maxX || y2 > maxY) return;
         } else if(config.getBoundaryMethod() == Boundary.INFINITE) {
-            int cps = config.getCellsPerSide();
-            // TODO: Have to check when to move to avoid duplicates
              if (x2 == -1) x2 += cps;
              if (y2 == -1) y2 += cps;
              if (x2 == cps) x2 = 0; // If we are at the end + 1, move it to 0
@@ -113,6 +111,7 @@ public class Simulation {
             throw new RuntimeException("Invalid Boundary method");
         }
 
+//        System.out.printf("Comparing cell (%d, %d) with (%d, %d)\n", x1,y1,x2,y2);
 
         // From now on both x1,y1 and x2,y2 are valid cells
         Set<Integer> cell1 = cim.getCells().get(x1).get(y1);

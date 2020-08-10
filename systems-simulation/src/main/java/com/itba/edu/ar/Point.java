@@ -20,7 +20,7 @@ public class Point implements Configurable {
     }
 
     public double getDifference(double a, double b) {
-        double diff = b - a;
+        double diff = Math.abs(b - a);
         if (getStaticConfig().getBoundaryMethod() == Boundary.INFINITE) {
             return Math.min(diff, getStaticConfig().getSideLength() - diff);
         } else {
