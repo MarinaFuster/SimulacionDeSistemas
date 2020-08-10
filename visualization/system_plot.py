@@ -64,7 +64,7 @@ def plot_particles_periodic_contours(L, ax, particles, color='#90AFAF', fill=Fal
         if is_out_of_limit(L, p):
            plot_out_of_limits_particle(L, ax, p, color=color, fill=fill)
         else:
-            plot_particle(ax, p.position.x, p.position.y, color=color, fill=fill)
+            plot_particle(ax, p.position.x, p.position.y, p.ratio, color=color, fill=fill)
 
 # Plots space of the system where the particles will be
 def plot_space(system, grid=True):
@@ -128,7 +128,7 @@ def plot_neighbours(system, particle_number):
         plot_out_of_limits_particle(L, ax, particle, color=p_color, fill=p_fill)
         # Plots radius
         p = Particle(particle.ratio + system.rc, particle.properties)
-        p.dynamic(p.position, p.velocity)
+        p.dynamic(particle.position, particle.velocity)
         plot_out_of_limits_particle(L, ax, p, color=r_color, fill=r_fill)
 
     if particle.neighbours.__len__() == 0:
