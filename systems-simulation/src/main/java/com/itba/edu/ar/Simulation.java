@@ -103,9 +103,12 @@ public class Simulation {
             if (x2 == -1 || y2 == -1) return;
             if (x2 > maxX || y2 > maxY) return;
         } else if(config.getBoundaryMethod() == Boundary.INFINITE) {
+            int cps = config.getCellsPerSide();
             // TODO: Have to check when to move to avoid duplicates
-            // if (x2 == -1) x2 += config.getCellsPerSide();
-            // if (y2 == -1) y2 += config.getCellsPerSide();
+             if (x2 == -1) x2 += cps;
+             if (y2 == -1) y2 += cps;
+             if (x2 == cps) x2 = 0; // If we are at the end + 1, move it to 0
+             if (y2 == cps) y2 = 0;
         } else {
             throw new RuntimeException("Invalid Boundary method");
         }
@@ -115,16 +118,22 @@ public class Simulation {
         Set<Integer> cell1 = cim.getCells().get(x1).get(y1);
         Set<Integer> cell2 = cim.getCells().get(x2).get(y2);
 
+
+
         for (Integer id1 : cell1) {
             for (Integer id2 : cell2) {
-                if (id1 == id2) continue;
+                if (cell1 != cell2)  {
+                    if (id1.equals(id2)) continue;
+                } else {
+                    // cell1 == cell2, we want to avoid duplicate checks
+                    if (id1 >= id2) continue;
+                }
                 if (particleMap.get(id1).interacts(particleMap.get(id2))) {
                     interactions.computeIfAbsent(id1, k -> new HashSet<>());
                     interactions.computeIfAbsent(id2, k -> new HashSet<>());
 
                     interactions.get(id1).add(id2);
                     interactions.get(id2).add(id1);
-//                    System.out.printf("%d interacts with %d!\n",id1,id2);
                 }
 
             }

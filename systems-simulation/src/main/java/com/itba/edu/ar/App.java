@@ -5,7 +5,10 @@ import com.itba.edu.ar.config.Boundary;
 import com.itba.edu.ar.config.StaticConfig;
 import com.itba.edu.ar.config.StaticConfigLoader;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,9 +21,51 @@ public class App
 
     public static void main( String[] args )
     {
+        try  {
+            FileWriter fw = new FileWriter("timeDifferentNandM.txt");
+            PrintWriter pw = new PrintWriter(fw);
+                for (int i = 100; i <= 1000; i++) {
+                    try {
+                        for (int j = 1; j < 1000; j++) {
+                            long time = timeDifferentCellSidesAndSampleSize(j,i);
+                            pw.printf("%d,%d,%d\n", j, i, time);
+//                            System.out.printf("%d,%d,%d\n", j, i, time);
+                        }
+                    } catch (IllegalArgumentException ex) {
+//                        System.out.println(ex.getMessage());
+                    }
+                }
+            fw.close();
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+
+
+    public static long timeDifferentCellSidesAndSampleSize(int M, int N) {
+        appConfig = new AppConfig("./sample/");
+        staticConfig = new StaticConfig(10, N, M, 20, 1, Boundary.CLOSED, new HashMap<>());
+        addParticlesToStaticConfig(0.25);
+        if ( !staticConfig.valid()) throw new IllegalArgumentException("Invalid static config parameters");
+        long start = System.nanoTime();
+        Simulation sim = new Simulation(staticConfig.getParticles());
+        try {
+            sim.run();
+        } catch ( IOException ex) {
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+
+        }
+        long end = System.nanoTime();
+        return end - start;
+    }
+
+    public static void runConfigWithStdInput() {
         appConfig = new AppConfig("./sample/");
         appConfig.printInteractionsList = true;
         staticConfig = generateStaticConfig();
+        if ( staticConfig.valid()) throw new IllegalArgumentException("Invalid static config parameters");
         addParticlesToStaticConfig();
         try {
             StaticConfigLoader.save(staticConfig, "./sample/staticConfigOutput.txt");
@@ -66,6 +111,10 @@ public class App
     public static void addParticlesToStaticConfig() {
         Scanner s = new Scanner(System.in);
         double particlesRadius = getDouble(s, "Insert radius for particles: ");
+        addParticlesToStaticConfig(particlesRadius);
+    }
+
+    public static void addParticlesToStaticConfig(double particlesRadius) {
         int i = 0;
         while (staticConfig.getParticles().size() < staticConfig.getSampleSize()) {
             Point center = Point.getRandomPoint(staticConfig.getSideLength(), staticConfig.getSideLength());
