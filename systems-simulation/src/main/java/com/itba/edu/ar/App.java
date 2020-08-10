@@ -21,24 +21,26 @@ public class App
 
     public static void main( String[] args )
     {
-        try  {
-            FileWriter fw = new FileWriter("timeDifferentNandM.txt");
-            PrintWriter pw = new PrintWriter(fw);
-                for (int i = 100; i <= 1000; i++) {
-                    try {
-                        for (int j = 1; j < 1000; j++) {
-                            long time = timeDifferentCellSidesAndSampleSize(j,i);
-                            pw.printf("%d,%d,%d\n", j, i, time);
-//                            System.out.printf("%d,%d,%d\n", j, i, time);
-                        }
-                    } catch (IllegalArgumentException ex) {
-//                        System.out.println(ex.getMessage());
-                    }
-                }
-            fw.close();
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-        }
+//        try  {
+//            FileWriter fw = new FileWriter("timeDifferentNandM.txt");
+//            PrintWriter pw = new PrintWriter(fw);
+//                for (int i = 100; i <= 1000; i++) {
+//                    try {
+//                        for (int j = 1; j < 1000; j++) {
+//                            long time = timeDifferentCellSidesAndSampleSize(j,i);
+//                            pw.printf("%d,%d,%d\n", j, i, time);
+////                            System.out.printf("%d,%d,%d\n", j, i, time);
+//                        }
+//                    } catch (IllegalArgumentException ex) {
+////                        System.out.println(ex.getMessage());
+//                    }
+//                }
+//            fw.close();
+//        } catch (IOException ex) {
+//            System.out.println(ex.getMessage());
+//        }
+
+        runConfigWithStdInput();
     }
 
 
@@ -65,8 +67,8 @@ public class App
         appConfig = new AppConfig("./sample/");
         appConfig.printInteractionsList = true;
         staticConfig = generateStaticConfig();
-        if ( staticConfig.valid()) throw new IllegalArgumentException("Invalid static config parameters");
         addParticlesToStaticConfig();
+        if ( !staticConfig.valid()) throw new IllegalArgumentException("Invalid static config parameters");
         try {
             StaticConfigLoader.save(staticConfig, "./sample/staticConfigOutput.txt");
         } catch ( IOException ex) {

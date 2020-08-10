@@ -82,8 +82,8 @@ public class StaticConfig {
                 .orElseThrow(NoSuchElementException::new).getRadius();
         double maxEffectiveInteractionRadius = 2 * maxParticleRadius + interactionRadius;
         if (sideLength / cellsPerSide <= maxEffectiveInteractionRadius) {
-//            System.out.println(String.format("Cell index method condition not valid: L / M (%.2f) is less than effective interaction radius %.2f",
-//                    sideLength / cellsPerSide, maxEffectiveInteractionRadius));
+            System.out.println(String.format("Cell index method condition not valid: L / M (%.2f) is less than effective interaction radius %.2f",
+                    sideLength / cellsPerSide, maxEffectiveInteractionRadius));
             return false;
         }
         return true;
