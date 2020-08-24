@@ -85,14 +85,36 @@ public class Space2D implements Space {
 
     @Override
     public void save(int epoch) throws IOException {
-        FileWriter fw = new FileWriter(Constants.OUTPUT_FOLDER + epoch + ".txt");
+        FileWriter fw = new FileWriter(Constants.OUTPUT_FOLDER +  "test.xyz", true);
         PrintWriter pw = new PrintWriter(fw);
-        pw.printf("%d\n", epoch);
+        pw.printf("%d\n\n", getCellCount());
         for(int i=0; i<sideLength; i++){
             for(int j=0; j<sideLength; j++) {
-                if(cells[i][j].isAlive()) pw.printf("%d,%d\n", i, j);
+                if(cells[i][j].isAlive()) pw.printf("H\t%d\t%d\t0\n", i, j);
             }
         }
         pw.close();
+    }
+
+    private int getCellCount() {
+        int count = 0;
+        for(int i=0; i<sideLength; i++){
+            for(int j=0; j<sideLength; j++) {
+                if(cells[i][j].isAlive()) count += 1;
+            }
+        }
+        return count;
+    }
+
+    public int getDimension() {
+        return dimension;
+    }
+
+    public int getSideLength() {
+        return sideLength;
+    }
+
+    public Cell[][] getCells() {
+        return cells;
     }
 }
