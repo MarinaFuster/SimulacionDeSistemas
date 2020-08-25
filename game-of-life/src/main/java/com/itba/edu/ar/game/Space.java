@@ -3,7 +3,7 @@ package com.itba.edu.ar.game;
 import java.io.IOException;
 
 public interface Space {
-    void initializeRandomSpace();
+    void initializeRandomSpace(double alivePercentage);
 
     void applyRules();
 

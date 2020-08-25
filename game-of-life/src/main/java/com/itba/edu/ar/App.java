@@ -26,7 +26,8 @@ public class App {
     }
 
     public static void startGame(StaticConfig config) throws IOException {
-        GameOfLife game = new GameOfLife(config.getDimension(), config.getSideLength(), config.getEpochs());
+        GameOfLife game = new GameOfLife(
+                config.getDimension(), config.getSideLength(), config.getEpochs(), config.getAlivePercentage());
         game.run();
     }
 
@@ -36,11 +37,17 @@ public class App {
         int dimension = getInteger(s, "Insert dimension (2 | 3): ");
         int sideLength = getInteger(s, "Insert side length: ");
         int epochs = getInteger(s, "Insert epochs: ");
-        return new StaticConfig(dimension, sideLength, epochs);
+        double alivePercentage = getDouble(s, "Insert starting alive percentage: ");
+        return new StaticConfig(dimension, sideLength, epochs, alivePercentage);
     }
 
     public static int getInteger(Scanner s, String message) {
         System.out.println(message);
         return s.nextInt();
+    }
+
+    public static double getDouble(Scanner s, String message) {
+        System.out.println(message);
+        return s.nextDouble();
     }
 }

@@ -14,8 +14,8 @@ public class Space3D implements Space {
     public Space3D(int dimension, int sideLength) {
         this.dimension = dimension;
         this.sideLength = sideLength;
-        this.cells = new Cell[sideLength][sideLength][sideLength]; // TODO: assuming cell is 1x1
-        this.initializeRandomSpace();
+        this.cells = new Cell[sideLength][sideLength][sideLength];
+        this.initializeRandomSpace(1);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class Space3D implements Space {
         return str.toString();
     }
 
-    public void initializeRandomSpace() {
+    public void initializeRandomSpace(double alivePercentage) {
         if(cells == null) throw new IllegalArgumentException("Cells should not be null");
 
         for(int i=0; i<sideLength; i++) {

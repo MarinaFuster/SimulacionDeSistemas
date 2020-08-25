@@ -4,11 +4,13 @@ public class StaticConfig {
     final private int dimension;
     final private int sideLength;
     final private int epochs;
+    final private double alivePercentage;
 
-    public StaticConfig(int dimension, int sideLength, int epochs) {
+    public StaticConfig(int dimension, int sideLength, int epochs, double alivePercentage) {
         this.dimension = dimension;
         this.sideLength = sideLength;
         this.epochs = epochs;
+        this.alivePercentage = alivePercentage;
     }
 
     @Override
@@ -18,6 +20,7 @@ public class StaticConfig {
         str.append("Dimension: " + this.dimension + "D\n");
         str.append("Side Length: " + this.sideLength + "\n");
         str.append("Epochs: " + this.epochs + "\n");
+        str.append("Starting Alive Percentage: " + this.alivePercentage + "\n");
         return str.toString();
     }
 
@@ -26,7 +29,15 @@ public class StaticConfig {
             System.out.println("Dimension can only be 2 or 3");
             return false;
         }
+        if(this.alivePercentage < 0.0 || this.alivePercentage > 1.0){
+            System.out.println("Starting Alive Percentage must be between 0 and 1");
+            return false;
+        }
         return true;
+    }
+
+    public double getAlivePercentage() {
+        return alivePercentage;
     }
 
     public int getDimension() {
