@@ -9,6 +9,7 @@ public class StaticConfigLoader {
         pw.println(staticConfig.getDimension());
         pw.println(staticConfig.getSideLength());
         pw.println(staticConfig.getEpochs());
+        pw.println(staticConfig.getAlivePercentage());
         pw.close();
     }
 }

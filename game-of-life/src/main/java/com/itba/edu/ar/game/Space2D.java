@@ -5,7 +5,11 @@ import com.itba.edu.ar.config.Constants;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Timestamp;
+import java.time.Duration;
+import java.util.Date;
 import java.util.Random;
+import java.util.concurrent.*;
 
 public class Space2D implements Space {
 
@@ -43,15 +47,35 @@ public class Space2D implements Space {
         int to = (int) Math.ceil(sideLength/2 + sideLength*0.1);
         int aliveCells = (int) Math.floor(Math.pow(from-to, 2)*alivePercentage);
 
-        // TODO: add some sort of timeout
-        if(alivePercentage > 0.7){
-            sortedAliveSpace(from, to, aliveCells);
-        }
-        else{
-            randomAliveSpace(from, to, aliveCells);
+        final Duration timeout = Duration.ofSeconds(60); // Timeout of one minute
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+
+        final Future<String> handler = executor.submit(new Callable() {
+            @Override
+            public String call() throws Exception {
+                if(alivePercentage > 0.7){
+                    sortedAliveSpace(from, to, aliveCells);
+                }
+                else{
+                    randomAliveSpace(from, to, aliveCells);
+                }
+                return "Completed";
+            }
+        });
+
+        try {
+            handler.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
+            this.aliveCellCount = aliveCells;
+        } catch (TimeoutException e) {
+            handler.cancel(true);
+            System.out.print("Random Space Initialization took to long\n");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
         }
 
-        this.aliveCellCount = aliveCells;
+        executor.shutdownNow();
     }
 
     private void randomAliveSpace(int from, int to, int aliveCells) {
@@ -137,7 +161,8 @@ public class Space2D implements Space {
 
     @Override
     public void save(int epoch) throws IOException {
-        FileWriter fw = new FileWriter(Constants.OUTPUT_FOLDER +  "test.xyz", true);
+        Date date = new Date();
+        FileWriter fw = new FileWriter(Constants.OUTPUT_FOLDER + new Timestamp(date.getTime()) + ".xyz", true);
         PrintWriter pw = new PrintWriter(fw);
         pw.printf("%d\n\n", aliveCellCount);
         for(int i=0; i<sideLength; i++){
