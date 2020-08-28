@@ -5,19 +5,19 @@ import com.itba.edu.ar.config.ConfigConst;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Timestamp;
+import java.util.Date;
 
-public class Space3D implements Space {
-    private final int dimension;
-    private final int sideLength;
-    private final int center;
+public class Space3D extends Space {
+
     private Cell[][][] cells;
 
-    public Space3D(int dimension, int sideLength, int center) {
+    public Space3D(int dimension, int sideLength, int center, double alivePercentage) {
         this.dimension = dimension;
         this.sideLength = sideLength;
         this.center = center;
         this.cells = new Cell[sideLength][sideLength][sideLength];
-        this.initializeRandomSpace(1);
+        this.initializeRandomSpace(alivePercentage, this.cells);
     }
 
     @Override
@@ -34,20 +34,49 @@ public class Space3D implements Space {
         return str.toString();
     }
 
-    public void initializeRandomSpace(double alivePercentage) {
-        if(cells == null) throw new IllegalArgumentException("Cells should not be null");
+    @Override
+    protected void randomAliveSpace(int from, int to, int aliveCells) {
+        int currentAliveCells = 0;
+        while(currentAliveCells < aliveCells) {
+            int i = randIndex(from, to);
+            int j = randIndex(from, to);
+            int k = randIndex(from, to);
+            if(!cells[i][j][k].isAlive()){
+                cells[i][j][k] = new Cell(CellState.ALIVE);
+                currentAliveCells++;
+            }
+        }
+    }
 
-        for(int i=0; i<sideLength; i++) {
-            for(int j=0; j<sideLength; j++){
-                for(int k=0; k<sideLength; k++){
-                    cells[i][j][k] = new Cell(Cell.getRandomState());
+    @Override
+    protected void sortedAliveSpace(int from, int to, int aliveCells){
+        int currentAliveCells = 0;
+        for(int i=from; i<=to && currentAliveCells < aliveCells; i++){
+            for(int j=from; j<=to && currentAliveCells < aliveCells; j++){
+                for(int k=from; k<=to && currentAliveCells < aliveCells; k++){
+                    cells[i][j][k] = new Cell(CellState.ALIVE);
+                    currentAliveCells++;
                 }
             }
         }
     }
 
-    // TODO: come up with 3d rules
     @Override
+    protected void deadSpace() {
+        for(int i=0; i<sideLength; i++) {
+            for(int j=0; j<sideLength; j++) {
+                for(int k=0; k<sideLength; k++) {
+                    cells[i][j][k] = new Cell(CellState.DEAD);
+                }
+            }
+        }
+    }
+
+    @Override
+    /*
+     *   Alive cells remain alive if they have 1, 3 or 5 neighbours
+     *   Dead cells turn into alive cells if they have 2, 4 or 6 neighbours alive
+     */
     public void applyRules() {
         Cell[][][] newCells = new Cell[sideLength][sideLength][sideLength];
         for(int i=0; i<sideLength; i++) {
@@ -55,8 +84,8 @@ public class Space3D implements Space {
                 for(int k=0; k<sideLength; k++){
                     int aliveNeighbours = aliveNeighbours(i, j, k);
                     Cell newCell;
-                    if((cells[i][j][k].isAlive() && (aliveNeighbours == 2 || aliveNeighbours == 3))
-                            || (!cells[i][j][k].isAlive() && aliveNeighbours == 3)){
+                    if((cells[i][j][k].isAlive() && (aliveNeighbours == (1 | 3 | 5)))
+                            || (!cells[i][j][k].isAlive() && aliveNeighbours == (2 | 4 | 6))){
                         newCell = new Cell(CellState.ALIVE);
                     }
                     else{
@@ -69,7 +98,6 @@ public class Space3D implements Space {
         this.cells = newCells;
     }
 
-    // TODO: static moore, with r=1, periodic contour generalize this?
     private int aliveNeighbours(int x, int y, int z) {
         int aliveNeighbours = 0;
         for(int i=-1; i<=1; i++) {
@@ -88,21 +116,16 @@ public class Space3D implements Space {
         return aliveNeighbours;
     }
 
-    private int getPeriodicIndex(int index) {
-        if(index == -1) return sideLength-1;
-        if(index == sideLength) return 0;
-        else return index;
-    }
-
     @Override
     public void save(int epoch) throws IOException {
-        FileWriter fw = new FileWriter(ConfigConst.OUTPUT_FOLDER + epoch + ".txt");
+        Date date = new Date();
+        FileWriter fw = new FileWriter(ConfigConst.OUTPUT_FOLDER + new Timestamp(date.getTime()) + ".xyz", true);
         PrintWriter pw = new PrintWriter(fw);
-        pw.printf("%d\n", epoch);
+        pw.printf("%d\n\n", aliveCellCount);
         for(int i=0; i<sideLength; i++){
             for(int j=0; j<sideLength; j++) {
-                for(int k=0; k<sideLength; k++) {
-                    if(cells[i][j][k].isAlive()) pw.printf("%d,%d,%d\n", i, j, k);
+                for(int k=0; k<sideLength; k++){
+                    if(cells[i][j][k].isAlive()) pw.printf("H\t%d\t%d\t%d\n", i, j, k); // TODO: ask Brian if this is ok
                 }
             }
         }
