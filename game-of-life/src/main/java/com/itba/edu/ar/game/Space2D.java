@@ -17,7 +17,7 @@ public class Space2D extends Space {
         this.sideLength = sideLength;
         this.center = center;
         this.cells = new Cell[sideLength][sideLength];
-        this.initializeRandomSpace(alivePercentage, this.cells);
+        this.initializeRandomSpace(GameConst.INIT_SPACE_PERCENTAGE_2D, alivePercentage, this.cells);
     }
 
     @Override

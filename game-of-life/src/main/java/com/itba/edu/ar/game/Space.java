@@ -32,14 +32,13 @@ public abstract class Space {
         return r.nextInt((to-from)+1) + from;
     }
 
-    public void initializeRandomSpace(double alivePercentage, Object cells) {
+    public void initializeRandomSpace(double initPercentage, double alivePercentage, Object cells) {
         if(cells == null) throw new IllegalArgumentException("Cells should not be null");
 
         this.deadSpace();
 
-        double p = GameConst.SPACE_PERCENTAGE_FOR_ALIVE_CELLS/2;
-        int from = center - (int) Math.ceil(p*sideLength);
-        int to = center + (int) Math.ceil(p*sideLength);
+        int from = center - (int) Math.ceil((initPercentage/2)*sideLength);
+        int to = center + (int) Math.ceil((initPercentage/2)*sideLength);
         int aliveCells = (int) Math.floor(Math.pow(from-to, 2)*alivePercentage);
 
         final Duration timeout = Duration.ofSeconds(GameConst.TIMEOUT); // Timeout of one minute
