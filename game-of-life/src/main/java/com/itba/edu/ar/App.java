@@ -1,6 +1,6 @@
 package com.itba.edu.ar;
 
-import com.itba.edu.ar.config.Constants;
+import com.itba.edu.ar.config.ConfigConst;
 import com.itba.edu.ar.config.StaticConfig;
 import com.itba.edu.ar.config.StaticConfigLoader;
 import com.itba.edu.ar.game.GameOfLife;
@@ -18,7 +18,7 @@ public class App {
         StaticConfig config = generateStaticConfig();
         if (!config.isValid()) throw new IllegalArgumentException("Invalid static config parameters");
         try {
-            StaticConfigLoader.save(config, Constants.OUTPUT_FOLDER + "staticConfigOutput.txt");
+            StaticConfigLoader.save(config, ConfigConst.OUTPUT_FOLDER + "staticConfigOutput.txt");
             startGame(config);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
@@ -27,7 +27,7 @@ public class App {
 
     public static void startGame(StaticConfig config) throws IOException {
         GameOfLife game = new GameOfLife(
-                config.getDimension(), config.getSideLength(), config.getEpochs(), config.getAlivePercentage());
+                config.getDimension(), config.getSideLength(), config.getEpochs(), config.getAlivePercentage(), config.getCenter());
         game.run();
     }
 

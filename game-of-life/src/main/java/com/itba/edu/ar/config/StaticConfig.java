@@ -5,12 +5,14 @@ public class StaticConfig {
     final private int sideLength;
     final private int epochs;
     final private double alivePercentage;
+    final private int center;
 
     public StaticConfig(int dimension, int sideLength, int epochs, double alivePercentage) {
         this.dimension = dimension;
         this.sideLength = sideLength;
         this.epochs = epochs;
         this.alivePercentage = alivePercentage;
+        this.center = (int) Math.floor(sideLength/2);
     }
 
     @Override
@@ -50,5 +52,9 @@ public class StaticConfig {
 
     public int getEpochs() {
         return epochs;
+    }
+
+    public int getCenter() {
+        return center;
     }
 }

@@ -1,5 +1,5 @@
 package com.itba.edu.ar.config;
 
-public class Constants {
+public class ConfigConst {
     public final static String OUTPUT_FOLDER = "sample/";
 }

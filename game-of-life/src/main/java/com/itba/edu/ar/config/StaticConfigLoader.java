@@ -10,6 +10,7 @@ public class StaticConfigLoader {
         pw.println(staticConfig.getSideLength());
         pw.println(staticConfig.getEpochs());
         pw.println(staticConfig.getAlivePercentage());
+        pw.println(staticConfig.getCenter());
         pw.close();
     }
 }

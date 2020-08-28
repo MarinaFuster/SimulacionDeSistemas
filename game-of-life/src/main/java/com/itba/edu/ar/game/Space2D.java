@@ -1,6 +1,6 @@
 package com.itba.edu.ar.game;
 
-import com.itba.edu.ar.config.Constants;
+import com.itba.edu.ar.config.ConfigConst;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,12 +15,14 @@ public class Space2D implements Space {
 
     private final int dimension;
     private final int sideLength;
+    private final int center;
     private int aliveCellCount;
     private Cell[][] cells;
 
-    public Space2D(int dimension, int sideLength, double alivePercentage) {
+    public Space2D(int dimension, int sideLength, double alivePercentage, int center) {
         this.dimension = dimension;
         this.sideLength = sideLength;
+        this.center = center;
         this.aliveCellCount = 0;
         this.cells = new Cell[sideLength][sideLength];
         this.initializeRandomSpace(alivePercentage);
@@ -43,8 +45,9 @@ public class Space2D implements Space {
 
         this.deadSpace();
 
-        int from = (int) Math.ceil(sideLength/2 - sideLength*0.1);
-        int to = (int) Math.ceil(sideLength/2 + sideLength*0.1);
+        double p = GameConst.SPACE_PERCENTAGE_FOR_ALIVE_CELLS/2;
+        int from = center - (int) Math.ceil(p*sideLength);
+        int to = center + (int) Math.ceil(p*sideLength);
         int aliveCells = (int) Math.floor(Math.pow(from-to, 2)*alivePercentage);
 
         final Duration timeout = Duration.ofSeconds(60); // Timeout of one minute
@@ -162,7 +165,7 @@ public class Space2D implements Space {
     @Override
     public void save(int epoch) throws IOException {
         Date date = new Date();
-        FileWriter fw = new FileWriter(Constants.OUTPUT_FOLDER + new Timestamp(date.getTime()) + ".xyz", true);
+        FileWriter fw = new FileWriter(ConfigConst.OUTPUT_FOLDER + new Timestamp(date.getTime()) + ".xyz", true);
         PrintWriter pw = new PrintWriter(fw);
         pw.printf("%d\n\n", aliveCellCount);
         for(int i=0; i<sideLength; i++){

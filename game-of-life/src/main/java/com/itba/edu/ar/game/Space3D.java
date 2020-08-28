@@ -1,6 +1,6 @@
 package com.itba.edu.ar.game;
 
-import com.itba.edu.ar.config.Constants;
+import com.itba.edu.ar.config.ConfigConst;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,11 +9,13 @@ import java.io.PrintWriter;
 public class Space3D implements Space {
     private final int dimension;
     private final int sideLength;
+    private final int center;
     private Cell[][][] cells;
 
-    public Space3D(int dimension, int sideLength) {
+    public Space3D(int dimension, int sideLength, int center) {
         this.dimension = dimension;
         this.sideLength = sideLength;
+        this.center = center;
         this.cells = new Cell[sideLength][sideLength][sideLength];
         this.initializeRandomSpace(1);
     }
@@ -44,6 +46,7 @@ public class Space3D implements Space {
         }
     }
 
+    // TODO: come up with 3d rules
     @Override
     public void applyRules() {
         Cell[][][] newCells = new Cell[sideLength][sideLength][sideLength];
@@ -93,7 +96,7 @@ public class Space3D implements Space {
 
     @Override
     public void save(int epoch) throws IOException {
-        FileWriter fw = new FileWriter(Constants.OUTPUT_FOLDER + epoch + ".txt");
+        FileWriter fw = new FileWriter(ConfigConst.OUTPUT_FOLDER + epoch + ".txt");
         PrintWriter pw = new PrintWriter(fw);
         pw.printf("%d\n", epoch);
         for(int i=0; i<sideLength; i++){
