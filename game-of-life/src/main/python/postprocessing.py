@@ -1,8 +1,8 @@
 from enum import Enum
 INPUT_PATH = "../../../sample/"
 STATIC_CONFIG_PATH = INPUT_PATH + "staticConfigOutput.txt"
-DINAMIC_INPUT_PATH = INPUT_PATH + "2020-08-28 11:35:32.899.xyz"
-OUTPUT_PATH = INPUT_PATH + "test.xyz"
+DINAMIC_INPUT_PATH = INPUT_PATH + "dynamic_output.xyz"
+OUTPUT_PATH = INPUT_PATH + "dynamic_output_with_time.xyz"
 
 
 
@@ -17,12 +17,13 @@ class Particle():
         self.r = 0
         self.g = 0
         self.b = 0
+        self.radius = 0.1
 
     def __str__(self):
         if self.colored:
-            return "{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(self.name, self.x, self.y, self.z, self.r,self.g,self.b)
+            return "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(self.name, self.x, self.y, self.z, self.radius, self.r,self.g,self.b)
         else:
-            return "{}\t{}\t{}\t{}\n".format(self.name, self.x, self.y, self.z)
+            return "{}\t{}\t{}\t{}\t{}\n".format(self.name, self.x, self.y, self.z, self.radius)
 
 class StaticConfig:
     def load(self):
@@ -48,7 +49,7 @@ class PostProcessor():
     def run(self):
         state = StaticInputState.START
         remaining = 0
-        time = 9
+        time = 0
         with open(DINAMIC_INPUT_PATH) as in_f:
             with open(OUTPUT_PATH, "w+") as out_f:
                 for line in in_f:
@@ -58,7 +59,10 @@ class PostProcessor():
                         state = StaticInputState.COMMENT
                     elif state == StaticInputState.COMMENT:
                         out_f.write(line)
-                        state = StaticInputState.PARTICLE
+                        if remaining == 0:
+                            state = StaticInputState.START
+                        else:
+                            state = StaticInputState.PARTICLE
                     elif state == StaticInputState.PARTICLE:
                         particle = Particle(line)
                         
