@@ -119,13 +119,13 @@ public class Space3D extends Space {
     @Override
     public void save(int epoch) throws IOException {
         Date date = new Date();
-        FileWriter fw = new FileWriter(ConfigConst.OUTPUT_FOLDER + new Timestamp(date.getTime()) + ".xyz", true);
+        FileWriter fw = new FileWriter(getOutputFileName(epoch), true);
         PrintWriter pw = new PrintWriter(fw);
         pw.printf("%d\n\n", aliveCellCount);
         for(int i=0; i<sideLength; i++){
             for(int j=0; j<sideLength; j++) {
                 for(int k=0; k<sideLength; k++){
-                    if(cells[i][j][k].isAlive()) pw.printf("H\t%d\t%d\t%d\n", i, j, k); // TODO: ask Brian if this is ok
+                    if(cells[i][j][k].isAlive()) pw.printf("H\t%d\t%d\t%d\n", i, j, k);
                 }
             }
         }

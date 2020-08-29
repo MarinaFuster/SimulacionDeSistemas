@@ -1,5 +1,7 @@
 package com.itba.edu.ar.game;
 
+import com.itba.edu.ar.config.ConfigConst;
+
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Random;
@@ -20,6 +22,10 @@ public abstract class Space {
     protected abstract void sortedAliveSpace(int from, int to, int aliveCells);
 
     protected abstract void deadSpace();
+
+    protected String getOutputFileName(int epoch) {
+        return String.format("%sdynamic_output.xyz", ConfigConst.OUTPUT_FOLDER);
+    }
 
     protected int getPeriodicIndex(int index) {
         if(index == -1) return sideLength-1;

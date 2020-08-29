@@ -104,9 +104,9 @@ public class Space2D extends Space {
         return aliveNeighbours;
     }
 
-    public void save(int epoch) throws IOException {
+    public void save(int epoch  ) throws IOException {
         Date date = new Date();
-        FileWriter fw = new FileWriter(ConfigConst.OUTPUT_FOLDER + new Timestamp(date.getTime()) + ".xyz", true);
+        FileWriter fw = new FileWriter(getOutputFileName(epoch), true);
         PrintWriter pw = new PrintWriter(fw);
         pw.printf("%d\n\n", aliveCellCount);
         for(int i=0; i<sideLength; i++){
