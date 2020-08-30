@@ -75,14 +75,20 @@ public class Space3D extends Space {
     @Override
     public void applyRules() {
         Cell[][][] newCells = new Cell[sideLength][sideLength][sideLength];
+        int newCellsAliveCount = 0;
         for(int i=0; i<sideLength; i++) {
             for(int j=0; j<sideLength; j++) {
                 for(int k=0; k<sideLength; k++){
                     int aliveNeighbours = aliveNeighbours(i, j, k);
-                    newCells[i][j][k] = new Cell(applyCloudOneRules(aliveNeighbours, cells[i][j][k].getState()));
+                    CellState state = applyCloudOneRules(aliveNeighbours, cells[i][j][k].getState());
+                    if(state == CellState.ALIVE) {
+                        newCellsAliveCount++;
+                    }
+                    newCells[i][j][k] = new Cell(state);
                 }
             }
         }
+        this.aliveCellCount = newCellsAliveCount;
         this.cells = newCells;
     }
 
