@@ -93,12 +93,12 @@ public class Space3D extends Space {
     }
 
     /*
-    * Alive cells with 13,14,15,16,17,18,19,20,21,22,23,24,25 or 26 neighbors survive.
-    * Empty cells with 13,14,17,18 or 19 neighbors have a new cell born at that location.
+    * Alive cells with more then 9 and lower than 26 neighbors survive.
+    * Empty cells with more than 7 and lower than 19 neighbors have a new cell born at that location.
     * */
     private CellState applyCloudOneRules(int aliveNeighbours, CellState cellState) {
-        if((cellState == CellState.ALIVE && aliveNeighbours >= 13 && aliveNeighbours <= 26) ||
-                (cellState == CellState.DEAD && aliveNeighbours >=13 && aliveNeighbours <=19))
+        if((cellState == CellState.ALIVE && aliveNeighbours >= 9 && aliveNeighbours <= 26) ||
+                (cellState == CellState.DEAD && aliveNeighbours >= 7 && aliveNeighbours <=19))
             return CellState.ALIVE;
         return CellState.DEAD;
     }
