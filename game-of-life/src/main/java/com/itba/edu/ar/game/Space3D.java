@@ -73,29 +73,28 @@ public class Space3D extends Space {
     }
 
     @Override
-    /*
-     *   Alive cells remain alive if they have 1, 3 or 5 neighbours
-     *   Dead cells turn into alive cells if they have 2, 4 or 6 neighbours alive
-     */
     public void applyRules() {
         Cell[][][] newCells = new Cell[sideLength][sideLength][sideLength];
         for(int i=0; i<sideLength; i++) {
             for(int j=0; j<sideLength; j++) {
                 for(int k=0; k<sideLength; k++){
                     int aliveNeighbours = aliveNeighbours(i, j, k);
-                    Cell newCell;
-                    if((cells[i][j][k].isAlive() && (aliveNeighbours == (1 | 3 | 5)))
-                            || (!cells[i][j][k].isAlive() && aliveNeighbours == (2 | 4 | 6))){
-                        newCell = new Cell(CellState.ALIVE);
-                    }
-                    else{
-                        newCell = new Cell(CellState.DEAD);
-                    }
-                    newCells[i][j][k] = newCell;
+                    newCells[i][j][k] = new Cell(applyCloudOneRules(aliveNeighbours, cells[i][j][k].getState()));
                 }
             }
         }
         this.cells = newCells;
+    }
+
+    /*
+    * Alive cells with 13,14,15,16,17,18,19,20,21,22,23,24,25 or 26 neighbors survive.
+    * Empty cells with 13,14,17,18 or 19 neighbors have a new cell born at that location.
+    * */
+    private CellState applyCloudOneRules(int aliveNeighbours, CellState cellState) {
+        if((cellState == CellState.ALIVE && aliveNeighbours >= 13 && aliveNeighbours <= 26) ||
+                (cellState == CellState.DEAD && aliveNeighbours >=13 && aliveNeighbours <=19))
+            return CellState.ALIVE;
+        return CellState.DEAD;
     }
 
     private int aliveNeighbours(int x, int y, int z) {

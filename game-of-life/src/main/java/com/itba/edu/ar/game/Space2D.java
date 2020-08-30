@@ -74,7 +74,7 @@ public class Space2D extends Space {
             for(int j=0; j<sideLength; j++) {
                 int aliveNeighbours = aliveNeighbours(i, j);
                 Cell newCell;
-                if((cells[i][j].isAlive() && (aliveNeighbours == (2 | 3)))
+                if((cells[i][j].isAlive() && (aliveNeighbours == 2 || aliveNeighbours == 3))
                         || (!cells[i][j].isAlive() && aliveNeighbours == 3)){
                     newCell = new Cell(CellState.ALIVE);
                     newCellsAliveCount++;
