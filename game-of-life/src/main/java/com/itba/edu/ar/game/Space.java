@@ -3,7 +3,9 @@ package com.itba.edu.ar.game;
 import com.itba.edu.ar.config.ConfigConst;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.time.Duration;
+import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.*;
 
@@ -12,6 +14,9 @@ public abstract class Space {
     protected int sideLength = 0;
     protected int center = 0;
     protected int aliveCellCount;
+
+    protected static String timeStamp = String.valueOf(new Timestamp(new Date().getTime()));
+
 
     public abstract void save(int epoch) throws IOException;
 
@@ -24,7 +29,7 @@ public abstract class Space {
     protected abstract void deadSpace();
 
     protected String getOutputFileName(int epoch) {
-        return String.format("%sdynamic_output.xyz", ConfigConst.OUTPUT_FOLDER);
+        return String.format("%sdynamic_output%s.xyz", ConfigConst.OUTPUT_FOLDER, timeStamp);
     }
 
     protected int getPeriodicIndex(int index) {
