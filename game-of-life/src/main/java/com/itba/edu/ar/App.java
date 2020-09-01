@@ -6,6 +6,7 @@ import com.itba.edu.ar.config.StaticConfigLoader;
 import com.itba.edu.ar.game.GameOfLife;
 import com.itba.edu.ar.game.Rule;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -43,6 +44,11 @@ public class App {
             } else {
                 dynamicOutputName = String.format("%s%s_dynamic_%d_multiple.xyz", ConfigConst.OUTPUT_FOLDER, config.getName(), loopNumber);
             }
+
+            try {
+                File f = new File(dynamicOutputName);
+                if(f.delete()) System.out.println("[WARNING] Dynamic file with same name already existed and was deleted");
+            } catch (Exception e) {}
             StaticConfigLoader.save(config, staticOutputName);
             startGame(config, dynamicOutputName);
         } catch (IOException ex) {
