@@ -15,6 +15,7 @@ public abstract class Space {
     protected int center = 0;
     protected Rule rule;
     protected int aliveCellCount;
+    protected String name = "game_of_life";
 
     protected static String timeStamp = String.valueOf(new Timestamp(new Date().getTime()));
 
@@ -30,7 +31,7 @@ public abstract class Space {
     protected abstract void deadSpace();
 
     protected String getOutputFileName(int epoch) {
-        return String.format("%sdynamic_output%s.xyz", ConfigConst.OUTPUT_FOLDER, timeStamp);
+        return name;
     }
 
     protected int getPeriodicIndex(int index) {

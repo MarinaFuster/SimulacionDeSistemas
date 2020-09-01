@@ -9,14 +9,16 @@ public class StaticConfig {
     final private double alivePercentage;
     final private int center;
     final private Rule rule;
+    final private String name;
 
-    public StaticConfig(int dimension, int sideLength, int epochs, double alivePercentage, Rule rule) {
+    public StaticConfig(int dimension, int sideLength, int epochs, double alivePercentage, Rule rule, String name) {
         this.dimension = dimension;
         this.sideLength = sideLength;
         this.epochs = epochs;
         this.alivePercentage = alivePercentage;
         this.center = (int) Math.floor(sideLength/2);
         this.rule = rule;
+        this.name = name;
     }
 
     @Override
@@ -65,4 +67,6 @@ public class StaticConfig {
     public Rule getRule() {
         return rule;
     }
+
+    public String getName() { return name; }
 }

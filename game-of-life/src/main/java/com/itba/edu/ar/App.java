@@ -12,28 +12,58 @@ import java.util.Scanner;
 public class App {
 
     public static void main( String[] args ) {
+
         runConfigWithStdInput();
+//        runConfigMultipleTimes();
     }
 
-    public static void runConfigWithStdInput() {
-        StaticConfig config = generateStaticConfig();
+    public static void runConfigMultipleTimes() {
+
+        int times = 5;
+        String name = "test";
+        int dimension = 2;
+        int sideLength = 200;
+        int epochs = 20;
+        double alivePercentage = 0.1;
+        Rule rule = Rule.CONWAY_2D_RULE_SET;
+
+        StaticConfig config = new StaticConfig(dimension, sideLength, epochs, alivePercentage, rule, name);
         if (!config.isValid()) throw new IllegalArgumentException("Invalid static config parameters");
+        for (int i = 1; i <= times; i++) {
+            runConfig(config, i);
+        }
+    }
+
+    public static void runConfig(StaticConfig config, int loopNumber) {
         try {
-            StaticConfigLoader.save(config, ConfigConst.OUTPUT_FOLDER + "staticConfigOutput.txt");
-            startGame(config);
+            String staticOutputName, dynamicOutputName;
+            staticOutputName = String.format("%s%s_static.txt", ConfigConst.OUTPUT_FOLDER, config.getName());
+            if (loopNumber == 0 ) {
+                dynamicOutputName = String.format("%s%s_dynamic.xyz", ConfigConst.OUTPUT_FOLDER, config.getName());
+            } else {
+                dynamicOutputName = String.format("%s%s_dynamic_%d_multiple.xyz", ConfigConst.OUTPUT_FOLDER, config.getName(), loopNumber);
+            }
+            StaticConfigLoader.save(config, staticOutputName);
+            startGame(config, dynamicOutputName);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
     }
 
-    public static void startGame(StaticConfig config) throws IOException {
+    public static void runConfigWithStdInput() {
+        StaticConfig config = getStaticConfigFromStdIn();
+        if (!config.isValid()) throw new IllegalArgumentException("Invalid static config parameters");
+        runConfig(config, 0); // The 0 means that this is not a looped run, but a unique one
+    }
+
+    public static void startGame(StaticConfig config, String dynamicOutputName) throws IOException {
         GameOfLife game = new GameOfLife(
                 config.getDimension(), config.getSideLength(), config.getEpochs(),
-                config.getAlivePercentage(), config.getCenter(), config.getRule());
+                config.getAlivePercentage(), config.getCenter(), config.getRule(), dynamicOutputName);
         game.run();
     }
 
-    public static StaticConfig generateStaticConfig() {
+    public static StaticConfig getStaticConfigFromStdIn() {
         Scanner s = new Scanner(System.in);
 
         int dimension = getInteger(s, "Insert dimension (2 | 3): ");
@@ -41,7 +71,8 @@ public class App {
         int epochs = getInteger(s, "Insert epochs: ");
         double alivePercentage = getDouble(s, "Insert starting alive percentage: ");
         Rule rule = dimension == 2 ? get2DRule(s) : get3DRule(s);
-        return new StaticConfig(dimension, sideLength, epochs, alivePercentage, rule);
+        String name = "game_of_life"; // TODO: @Maru maybe we want to add this one to the stdin parameters? This is the name of the dyanmic
+        return new StaticConfig(dimension, sideLength, epochs, alivePercentage, rule, name);
     }
 
     public static Rule get2DRule(Scanner s) {

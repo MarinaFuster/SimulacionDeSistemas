@@ -8,13 +8,14 @@ public class Space2D extends Space {
 
     private Cell[][] cells;
 
-    public Space2D(int dimension, int sideLength, int center, double alivePercentage, Rule rule) {
+    public Space2D(int dimension, int sideLength, int center, double alivePercentage, Rule rule, String name) {
         this.dimension = dimension;
         this.sideLength = sideLength;
         this.center = center;
         this.rule = rule;
         this.cells = new Cell[sideLength][sideLength];
         this.initializeRandomSpace(GameConst.INIT_SPACE_PERCENTAGE_2D, alivePercentage, this.cells);
+        this.name = name;
     }
 
     @Override

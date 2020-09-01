@@ -6,10 +6,10 @@ public class GameOfLife {
     private final Space space;
     private final int epochs;
 
-    public GameOfLife(int dimension, int sideLength, int epochs, double alivePercentage, int center, Rule rule) throws IOException {
+    public GameOfLife(int dimension, int sideLength, int epochs, double alivePercentage, int center, Rule rule, String name) throws IOException {
         this.epochs = epochs;
-        if(dimension == 2) this.space = new Space2D(dimension, sideLength, center, alivePercentage, rule);
-        else this.space = new Space3D(dimension, sideLength, center, alivePercentage, rule);
+        if(dimension == 2) this.space = new Space2D(dimension, sideLength, center, alivePercentage, rule, name);
+        else this.space = new Space3D(dimension, sideLength, center, alivePercentage, rule, name);
         this.space.save(GameConst.INIT_CONDITIONS);
     }
 
