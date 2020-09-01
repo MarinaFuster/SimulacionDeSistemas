@@ -13,6 +13,7 @@ public abstract class Space {
     protected int dimension = 0;
     protected int sideLength = 0;
     protected int center = 0;
+    protected Rule rule;
     protected int aliveCellCount;
 
     protected static String timeStamp = String.valueOf(new Timestamp(new Date().getTime()));

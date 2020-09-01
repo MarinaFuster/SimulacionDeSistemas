@@ -1,21 +1,18 @@
 package com.itba.edu.ar.game;
 
-import com.itba.edu.ar.config.ConfigConst;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Timestamp;
-import java.util.Date;
 
 public class Space2D extends Space {
 
     private Cell[][] cells;
 
-    public Space2D(int dimension, int sideLength, int center, double alivePercentage) {
+    public Space2D(int dimension, int sideLength, int center, double alivePercentage, Rule rule) {
         this.dimension = dimension;
         this.sideLength = sideLength;
         this.center = center;
+        this.rule = rule;
         this.cells = new Cell[sideLength][sideLength];
         this.initializeRandomSpace(GameConst.INIT_SPACE_PERCENTAGE_2D, alivePercentage, this.cells);
     }
@@ -69,24 +66,33 @@ public class Space2D extends Space {
     public void applyRules() {
         Cell[][] newCells = new Cell[sideLength][sideLength];
         int newCellsAliveCount = 0;
-
         for(int i=0; i<sideLength; i++) {
             for(int j=0; j<sideLength; j++) {
                 int aliveNeighbours = aliveNeighbours(i, j);
-                Cell newCell;
-                if((cells[i][j].isAlive() && (aliveNeighbours == 2 || aliveNeighbours == 3))
-                        || (!cells[i][j].isAlive() && aliveNeighbours == 3)){
-                    newCell = new Cell(CellState.ALIVE);
-                    newCellsAliveCount++;
-                }
-                else{
-                    newCell = new Cell(CellState.DEAD);
-                }
-                newCells[i][j] = newCell;
+                CellState state = chooseRule(rule, aliveNeighbours, cells[i][j].getState());
+                if(state == CellState.ALIVE) newCellsAliveCount++;
+                newCells[i][j] = new Cell(state);
             }
         }
         this.cells = newCells;
         this.aliveCellCount = newCellsAliveCount;
+    }
+
+    private CellState chooseRule(Rule rule, int aliveNeighbours, CellState state) {
+        switch(rule){
+            case CONWAY_2D_RULE_SET: {
+                return Rules.conwayRule(aliveNeighbours, state);
+            }
+            case UNRESTRICTED_MULTIPLE_2D_RULE_SET: {
+                return Rules.unrestrictedMultipleRule(aliveNeighbours, state);
+            }
+            case THIRD_2D_RULE_SET: {
+                return Rules.testingRule(aliveNeighbours, state);
+            }
+            default: {
+                throw new IllegalArgumentException("No existing rule for 2D space");
+            }
+        }
     }
 
     private int aliveNeighbours(int x, int y) {
@@ -105,7 +111,6 @@ public class Space2D extends Space {
     }
 
     public void save(int epoch  ) throws IOException {
-        Date date = new Date();
         FileWriter fw = new FileWriter(getOutputFileName(epoch), true);
         PrintWriter pw = new PrintWriter(fw);
         pw.printf("%d\n\n", aliveCellCount);

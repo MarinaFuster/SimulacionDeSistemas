@@ -1,21 +1,18 @@
 package com.itba.edu.ar.game;
 
-import com.itba.edu.ar.config.ConfigConst;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Timestamp;
-import java.util.Date;
 
 public class Space3D extends Space {
 
     private Cell[][][] cells;
 
-    public Space3D(int dimension, int sideLength, int center, double alivePercentage) {
+    public Space3D(int dimension, int sideLength, int center, double alivePercentage, Rule rule) {
         this.dimension = dimension;
         this.sideLength = sideLength;
         this.center = center;
+        this.rule = rule;
         this.cells = new Cell[sideLength][sideLength][sideLength];
         this.initializeRandomSpace(GameConst.INIT_SPACE_PERCENTAGE_3D, alivePercentage, this.cells);
     }
@@ -80,10 +77,8 @@ public class Space3D extends Space {
             for(int j=0; j<sideLength; j++) {
                 for(int k=0; k<sideLength; k++){
                     int aliveNeighbours = aliveNeighbours(i, j, k);
-                    CellState state = applyCloudOneRules(aliveNeighbours, cells[i][j][k].getState());
-                    if(state == CellState.ALIVE) {
-                        newCellsAliveCount++;
-                    }
+                    CellState state = chooseRule(rule, aliveNeighbours, cells[i][j][k].getState());
+                    if(state == CellState.ALIVE) newCellsAliveCount++;
                     newCells[i][j][k] = new Cell(state);
                 }
             }
@@ -92,15 +87,21 @@ public class Space3D extends Space {
         this.cells = newCells;
     }
 
-    /*
-    * Alive cells with more then 9 and lower than 26 neighbors survive.
-    * Empty cells with more than 7 and lower than 19 neighbors have a new cell born at that location.
-    * */
-    private CellState applyCloudOneRules(int aliveNeighbours, CellState cellState) {
-        if((cellState == CellState.ALIVE && aliveNeighbours >= 9 && aliveNeighbours <= 26) ||
-                (cellState == CellState.DEAD && aliveNeighbours >= 7 && aliveNeighbours <=19))
-            return CellState.ALIVE;
-        return CellState.DEAD;
+    private CellState chooseRule(Rule rule, int aliveNeighbours, CellState state) {
+        switch(rule){
+            case PRIME_BETWEEN_4_AND_20_PRIME_RULE_SET: {
+                return Rules.between4And20PrimeRule(aliveNeighbours, state);
+            }
+            case PRIME_LESS_40_PRIME_3D_RULE_SET: {
+                return Rules.lessThan40PrimeRule(aliveNeighbours, state);
+            }
+            case DIFFERENT_MULTIPLES_RULE_SET: {
+                return Rules.differentMultiplesRule(aliveNeighbours, state, aliveCellCount);
+            }
+            default: {
+                throw new IllegalArgumentException("No existing rule for 3D space");
+            }
+        }
     }
 
     private int aliveNeighbours(int x, int y, int z) {
@@ -123,7 +124,6 @@ public class Space3D extends Space {
 
     @Override
     public void save(int epoch) throws IOException {
-        Date date = new Date();
         FileWriter fw = new FileWriter(getOutputFileName(epoch), true);
         PrintWriter pw = new PrintWriter(fw);
         pw.printf("%d\n\n", aliveCellCount);

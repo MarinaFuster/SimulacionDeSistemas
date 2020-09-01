@@ -1,18 +1,22 @@
 package com.itba.edu.ar.config;
 
+import com.itba.edu.ar.game.Rule;
+
 public class StaticConfig {
     final private int dimension;
     final private int sideLength;
     final private int epochs;
     final private double alivePercentage;
     final private int center;
+    final private Rule rule;
 
-    public StaticConfig(int dimension, int sideLength, int epochs, double alivePercentage) {
+    public StaticConfig(int dimension, int sideLength, int epochs, double alivePercentage, Rule rule) {
         this.dimension = dimension;
         this.sideLength = sideLength;
         this.epochs = epochs;
         this.alivePercentage = alivePercentage;
         this.center = (int) Math.floor(sideLength/2);
+        this.rule = rule;
     }
 
     @Override
@@ -56,5 +60,9 @@ public class StaticConfig {
 
     public int getCenter() {
         return center;
+    }
+
+    public Rule getRule() {
+        return rule;
     }
 }
