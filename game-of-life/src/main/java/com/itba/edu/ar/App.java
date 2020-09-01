@@ -57,7 +57,7 @@ public class App {
         if(rule == 2)
             return Rule.UNRESTRICTED_MULTIPLE_2D_RULE_SET;
         if(rule == 3)
-            return Rule.THIRD_2D_RULE_SET;
+            return Rule.NUMBERS_2D_RULE_SET;
         throw new IllegalArgumentException("You must choose a number between 0 and 2\n");
     }
 

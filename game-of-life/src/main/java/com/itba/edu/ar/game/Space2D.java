@@ -86,7 +86,7 @@ public class Space2D extends Space {
             case UNRESTRICTED_MULTIPLE_2D_RULE_SET: {
                 return Rules.unrestrictedMultipleRule(aliveNeighbours, state);
             }
-            case THIRD_2D_RULE_SET: {
+            case NUMBERS_2D_RULE_SET: {
                 return Rules.testingRule(aliveNeighbours, state);
             }
             default: {
