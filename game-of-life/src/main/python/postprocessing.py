@@ -7,7 +7,7 @@ from os.path import isfile, join
 
 
 
-BASE_INPUT_PATH = "../../../output/visualizations/"
+BASE_INPUT_PATH = "../../../output/"
 INPUT_PATH = BASE_INPUT_PATH
 
 COLORED = True
@@ -194,9 +194,16 @@ class StatisticsExtractor:
         aliveCells = 0
         run_name = self.run_name
         stats = []
+        graph_suffix = "stat"
+        if self.statistic == "radius":
+            graph_suffix = "radius"
+        elif self.statistic == "mass":
+            graph_suffix = "alive_cells"
+
+
         dynamic_input_path = "{}{}_dynamic.xyz".format(INPUT_PATH,run_name)
         statistics_output_path = "{}{}_statistics.tsv".format(INPUT_PATH,run_name)
-        graph_output_path = "{}{}_radius.png".format(INPUT_PATH,run_name)
+        graph_output_path = "{}{}_{}.png".format(INPUT_PATH,run_name, graph_suffix)
 
         self.touchedWall = False
         self.touchedTime = 0
@@ -251,12 +258,16 @@ class StatisticsExtractor:
         np_stats = np.array(stats)
         
 
-        # Plot de radio
+        # Plot de radio"
         if self.statistic == "radius":
             plt.plot(np_stats[:,0], np_stats[:,1])
+            plt.xlabel("Numero de iteraciones")
+            plt.ylabel("Radio de crecimiento")
         elif self.statistic == "mass":
             # Plot de masa
             plt.plot(np_stats[:,0], np_stats[:,2])
+            plt.xlabel("Numero de iteraciones")
+            plt.ylabel("Porcentaje de celulas vivas")
         elif self.statistic == None:
             pass
         else:
@@ -273,8 +284,8 @@ class StatisticsExtractor:
 
         
         # Prender estos cuando grafiquemos solo 1 cosa, no para multiples curvas
-        # plt.savefig(graph_output_path)
-        # plt.clf()
+        plt.savefig(graph_output_path)
+        plt.clf()
 
 
 
@@ -313,7 +324,14 @@ if __name__ == "__main__":
         pp = PostProcessor(run_name, addTimeAsZDimension=False, addColor=COLORED)
         pp.run()
     elif operation == 2:
-        se = StatisticsExtractor(run_name)
+        statistic = int(input("What graph do we generate?\n1) Radius vs Iterations\n2) Mass vs Iterations\n"))
+        if statistic == 1:
+            statistic_val = "radius"
+        elif statistic == 2:
+            statistic_val = "mass"
+        else:
+            raise "invalid statistic number"
+        se = StatisticsExtractor(run_name, statistic_val)
         se.run()
 
 

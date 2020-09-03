@@ -14,8 +14,8 @@ public class App {
 
     public static void main( String[] args ) {
 
-//        runConfigWithStdInput();
-        runConfigMultipleTimes();
+        runConfigWithStdInput();
+//        runConfigMultipleTimes();
     }
 
     public static void runConfigMultipleTimes() {
