@@ -45,8 +45,10 @@ public class Rules {
         return CellState.DEAD;
     }
 
-    public static CellState differentMultiplesRule(int aliveNeighbours, CellState state, int aliveCellCount) {
-        if(aliveCellCount < 200) return multipleOfThreeRule(aliveNeighbours, state);
+    public static CellState differentMultiplesRule(int aliveNeighbours, CellState state, int aliveCellCount, int sideLen) {
+        int totalCells = sideLen * sideLen * sideLen; // Siempre es 3d esta regla!
+        double percentageAlive = aliveCellCount / ((double)totalCells);
+        if(percentageAlive < 0.5) return multipleOfThreeRule(aliveNeighbours, state);
         return multipleOfSevenRule(aliveNeighbours, state);
     }
 

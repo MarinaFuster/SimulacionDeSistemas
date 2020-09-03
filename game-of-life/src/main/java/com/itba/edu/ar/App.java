@@ -14,26 +14,30 @@ public class App {
 
     public static void main( String[] args ) {
 
-        runConfigWithStdInput();
-//        runConfigMultipleTimes();
+//        runConfigWithStdInput();
+        runConfigMultipleTimes();
     }
 
     public static void runConfigMultipleTimes() {
-
-        int times = 5;
-        String name = "test";
         int dimension = 2;
-        int sideLength = 200;
-        int epochs = 20;
-        double alivePercentage = 0.1;
+        int sideLength = 100;
+        int epochs = 250;
         Rule rule = Rule.CONWAY_2D_RULE_SET;
-
-        StaticConfig config = new StaticConfig(dimension, sideLength, epochs, alivePercentage, rule, name);
-        if (!config.isValid()) throw new IllegalArgumentException("Invalid static config parameters");
-        for (int i = 1; i <= times; i++) {
-            runConfig(config, i);
+        String ruleName = "conway100";
+        String name;
+        for (int initialCells = 1; initialCells <= 10; initialCells++) {
+            for (int i = 1; i <= 100; i++) {
+                String outputFolder = String.format("%s%s/%s_0%d", ConfigConst.OUTPUT_FOLDER, ruleName, ruleName, initialCells);
+                createDirectoryIfDoesntExist(outputFolder);
+                name = String.format("%s/%s_0%d/%s_0%d_%d", ruleName, ruleName, initialCells, ruleName, initialCells, i);
+                StaticConfig config = new StaticConfig(dimension, sideLength, epochs, initialCells/10.0, rule, name);
+                if (!config.isValid()) throw new IllegalArgumentException("Invalid static config parameters");
+                runConfig(config, 0);
+            }
         }
     }
+
+
 
     public static void runConfig(StaticConfig config, int loopNumber) {
         try {
@@ -47,7 +51,7 @@ public class App {
 
             try {
                 File f = new File(dynamicOutputName);
-                if(f.delete()) System.out.println("[WARNING] Dynamic file with same name already existed and was deleted");
+                if(f.delete()) System.out.printf("[WARNING] Dynamic file with same name already existed and was deleted (%s)\n", dynamicOutputName);
             } catch (Exception e) {}
             StaticConfigLoader.save(config, staticOutputName);
             startGame(config, dynamicOutputName);
@@ -77,7 +81,7 @@ public class App {
         int epochs = getInteger(s, "Insert epochs: ");
         double alivePercentage = getDouble(s, "Insert starting alive percentage: ");
         Rule rule = dimension == 2 ? get2DRule(s) : get3DRule(s);
-        String name = "game_of_life"; // TODO: @Maru maybe we want to add this one to the stdin parameters? This is the name of the dyanmic
+        String name = getString(s, "Insert name for simulation");
         return new StaticConfig(dimension, sideLength, epochs, alivePercentage, rule, name);
     }
 
@@ -124,5 +128,15 @@ public class App {
     public static double getDouble(Scanner s, String message) {
         System.out.println(message);
         return s.nextDouble();
+    }
+
+    public static String getString(Scanner s, String message) {
+        System.out.println(message);
+        return s.next();
+    }
+
+    private static void createDirectoryIfDoesntExist(String path) {
+        File dir = new File(path);
+        if ( !dir.exists()) dir.mkdir();
     }
 }

@@ -52,18 +52,18 @@ public abstract class Space {
 
         int from = center - (int) Math.ceil((initPercentage/2)*sideLength);
         int to = center + (int) Math.ceil((initPercentage/2)*sideLength);
-        int aliveCells = (int) Math.floor(Math.pow(from-to, 2)*alivePercentage);
+        int aliveCells = (int) Math.floor(Math.pow(Math.abs(from-to), dimension)*alivePercentage);
 
         final Duration timeout = Duration.ofSeconds(GameConst.TIMEOUT); // Timeout of one minute
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
         final Future<String> handler = executor.submit(() -> {
-            if(alivePercentage > 0.7){
-                sortedAliveSpace(from, to, aliveCells);
-            }
-            else{
+//            if(alivePercentage > 0.7){
+//                sortedAliveSpace(from, to, aliveCells);
+//            }
+//            else{
                 randomAliveSpace(from, to, aliveCells);
-            }
+//            }
             return "Completed";
         });
 

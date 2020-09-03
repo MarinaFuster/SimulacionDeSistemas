@@ -97,7 +97,7 @@ public class Space3D extends Space {
                 return Rules.lessThan40PrimeRule(aliveNeighbours, state);
             }
             case DIFFERENT_MULTIPLES_RULE_SET: {
-                return Rules.differentMultiplesRule(aliveNeighbours, state, aliveCellCount);
+                return Rules.differentMultiplesRule(aliveNeighbours, state, aliveCellCount, sideLength);
             }
             default: {
                 throw new IllegalArgumentException("No existing rule for 3D space");
