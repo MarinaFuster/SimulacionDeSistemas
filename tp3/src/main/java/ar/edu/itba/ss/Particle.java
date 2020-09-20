@@ -62,4 +62,9 @@ public class Particle {
     public int getCollisionCount() {
         return collisionCount;
     }
+
+    public void advanceStraight(double time) {
+        x += time * vx;
+        y += time * vy;
+    }
 }

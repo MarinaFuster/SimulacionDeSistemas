@@ -3,11 +3,14 @@ package ar.edu.itba.ss;
 public class Event implements Comparable<Event>{
     private double time;
     private Particle a, b;
+    private final int collisionCountA, collisionCountB;
 
     public Event(double time, Particle a, Particle b) {
         this.time = time;
         this.a = a;
         this.b = b;
+        this.collisionCountA = a.getCollisionCount();
+        this.collisionCountB = b.getCollisionCount();
     }
 
     public double getTime() {
@@ -36,7 +39,6 @@ public class Event implements Comparable<Event>{
         the same as when the event was created
      */
     public boolean wasSuperveningEvent() {
-        // TODO
-        return true;
+        return a.getCollisionCount() == collisionCountA && b.getCollisionCount() == collisionCountB;
     }
 }

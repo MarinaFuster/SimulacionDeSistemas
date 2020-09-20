@@ -36,18 +36,24 @@ public class MDSimulation {
 
         while(i < maxIterations) {
 
-            Event nextEvent;
+            Event nextEvent = null;
             // Get next valid event
             while(!events.isEmpty() && !events.poll().wasSuperveningEvent()) {
                  nextEvent = events.poll();
             }
+            assert nextEvent != null;
+            double nextEventTime = nextEvent.getTime();
+
+            // Advance all particles to time t along a straight line trajectory.
+            for(Particle p : particles) {
+                p.advanceStraight(nextEventTime);
+            }
+
+            // Update the velocities of the two colliding particles i and j according to the laws of elastic collision
 
 
-
-
-
-
-
+            // Determine all future collisions that would occur involving either i or j, assuming all particles move in straight
+            // line trajectories from time t onwards. Insert these events onto the priority queue.
 
 
             if (events.isEmpty()) throw new IllegalStateException("No events remaining!");
