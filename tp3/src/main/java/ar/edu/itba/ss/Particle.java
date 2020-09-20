@@ -1,13 +1,17 @@
 package ar.edu.itba.ss;
 
+import java.util.Objects;
+
 public class Particle {
     private final double radius = Constants.PARTICLE_RADIUS;
-    private  final double mass = Constants.PARTICLE_MASS;
+    private final double mass = Constants.PARTICLE_MASS;
 
     private double x,y, vx, vy;
     private int collisionCount = 0;
+    private final int id;
 
-    public Particle(double x, double y, double vx, double vy) {
+    public Particle(int id, double x, double y, double vx, double vy) {
+        this.id = id;
         this.x = x;
         this.y = y;
         this.vx = vx;
@@ -19,6 +23,7 @@ public class Particle {
         public double collidesX(): return the duration of time until the invoking particle collides with a vertical wall,
         assuming it follows a straight-line trajectory. If the particle never collides with a vertical wall, return a negative
         number (or +infinity = DOUBLE_MAX or NaN???)
+
     */
     public double collidesX() {
         // TODO
@@ -66,5 +71,46 @@ public class Particle {
     public void advanceStraight(double time) {
         x += time * vx;
         y += time * vy;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Particle particle = (Particle) o;
+        return id == particle.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
+    public double getMass() {
+        return mass;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public double getVx() {
+        return vx;
+    }
+
+    public double getVy() {
+        return vy;
     }
 }

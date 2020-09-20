@@ -1,30 +1,15 @@
 package ar.edu.itba.ss;
 
-public class Event implements Comparable<Event>{
+public abstract class Event implements Comparable<Event>{
     private double time;
-    private Particle a, b;
-    private final int collisionCountA, collisionCountB;
 
-    public Event(double time, Particle a, Particle b) {
+    public Event(double time) {
         this.time = time;
-        this.a = a;
-        this.b = b;
-        this.collisionCountA = a.getCollisionCount();
-        this.collisionCountB = b.getCollisionCount();
     }
 
     public double getTime() {
         return time;
     }
-
-    public Particle getA() {
-        return a;
-    }
-
-    public Particle getB() {
-        return b;
-    }
-
 
     public int compareTo(Event o) {
         return Double.compare(time, o.getTime());
@@ -38,7 +23,5 @@ public class Event implements Comparable<Event>{
         time the event was created. The event corresponds to a physical collision if the current collision counts of the particles are
         the same as when the event was created
      */
-    public boolean wasSuperveningEvent() {
-        return a.getCollisionCount() == collisionCountA && b.getCollisionCount() == collisionCountB;
-    }
+    public abstract  boolean wasSuperveningEvent();
 }

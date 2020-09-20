@@ -19,5 +19,6 @@ public class Main {
 
     public static void runSimulation(Configuration config) {
         MDSimulation simulation = new MDSimulation(config);
+        simulation.run();
     }
 }
