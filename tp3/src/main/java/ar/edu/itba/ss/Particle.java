@@ -99,14 +99,22 @@ public class Particle {
 
     //  update the invoking particle to simulate it bouncing off a vertical wall.
     public void bounceX() {
+        System.out.println("Particle " + id + " bounced with wall X");
+        System.out.printf("%f\t%f\n", x, y);
         vx = - vx;
+        collisionCount++;
     }
     // update the invoking particle to simulate it bouncing off a horizontal wall.
     public void bounceY() {
+        System.out.println("Particle " + id + " bounced with wall Y");
+        System.out.printf("%f\t%f\n", x, y);
         vy = -vy;
+        collisionCount++;
     }
     // update both particles to simulate them bouncing off each other.
     public void bounce(Particle b){
+        System.out.println("Particle " + id + " bounced with particle " + b.id);
+        System.out.printf("%f\t%f\n", x, y);
         double deltaX = b.x - x;
         double deltaY = b.y - y;
         double deltaVX = b.vx - vx;
@@ -123,7 +131,7 @@ public class Particle {
         collisionCount++;
 
         // This is to ignore the corner particles
-        if(b.radius != 0) {
+        if(b.radius != 0D) {
             b.vx = b.vx - jx / b.mass;
             b.vy = b.vy - jy / b.mass;
             b.collisionCount++;

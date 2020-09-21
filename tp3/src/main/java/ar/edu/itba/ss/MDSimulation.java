@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -48,7 +49,7 @@ public class MDSimulation {
         } catch (IOException e) {
             System.out.println("Unable to delete previously existing dynamic config");
         }
-
+        save();
         int i = 0;
         while(i < maxIterations) {
             Event nextEvent = null;
@@ -97,7 +98,7 @@ public class MDSimulation {
                     events.add(new WallXEvent(t, p));
                 }
                 if ( t2 >= 0) {
-                    events.add(new WallYEvent(t, p));
+                    events.add(new WallYEvent(t2, p));
                 }
             }
 
@@ -129,12 +130,12 @@ public class MDSimulation {
             particlesWithCorners.add(i, particles.get(i));
         }
 
-        Particle corner1 = new Particle(sampleSize - 2, universeWidth / 2, universeHeight / 2 + openingSize / 2, 0, 0);
-        Particle corner2 = new Particle(sampleSize - 2, universeWidth / 2, universeHeight / 2 - openingSize / 2, 0, 0);
-        corner1.setRadius(0);
-        corner2.setRadius(0);
-        particlesWithCorners.set(corner1.getId(), corner1);
-        particlesWithCorners.set(corner2.getId(), corner2);
+        Particle corner1 = new Particle(sampleSize, universeWidth / 2, universeHeight / 2 + openingSize / 2, 0, 0);
+        Particle corner2 = new Particle(sampleSize + 1, universeWidth / 2, universeHeight / 2 - openingSize / 2, 0, 0);
+        corner1.setRadius(0D);
+        corner2.setRadius(0D);
+        particlesWithCorners.add(corner1.getId(), corner1);
+        particlesWithCorners.add(corner2.getId(), corner2);
     }
 
     public Particle getParticle(int id) {
@@ -147,7 +148,6 @@ public class MDSimulation {
         double x;
         boolean overlaps;;
         do {
-
             y = Math.random() * (universeHeight - 2 * Constants.PARTICLE_RADIUS) + Constants.PARTICLE_RADIUS;
             x = Math.random() * (openingX - 2 * Constants.PARTICLE_RADIUS) + Constants.PARTICLE_RADIUS;
             overlaps = false;
@@ -164,12 +164,41 @@ public class MDSimulation {
 
     public void save(){
         try (FileWriter fw = new FileWriter(getOutputFileName(), true);) {
+
+            String particleFormat = "%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n";
             PrintWriter pw = new PrintWriter(fw);
-            pw.printf("%d\n\n", sampleSize);
+            double wallParticlesDiameter = 2 * Constants.WALLPARTICLESRADIUS;
+            long amountOfParticlesX = Math.round(universeWidth / wallParticlesDiameter);
+            long amountOfParticlesY = Math.round(universeHeight / wallParticlesDiameter);
+            long amountOfParticlesOpening = Math.round(((universeHeight - openingSize) / wallParticlesDiameter)  / 2);
+            long totalParticles = amountOfParticlesX * 2 + amountOfParticlesY * 2 + 2 * amountOfParticlesOpening + sampleSize;
+            pw.printf("%d\n\n", totalParticles);
             for (Particle p : particles) {
                 // TODO: Check if we add RGB here
-                pw.printf("%f\t%f\t%f\t%f\t%f\t%f\n", p.getX(), p.getY(), p.getVx(), p.getVy(), p.getMass(), p.getRadius());
+                double color = p.getId() / (double)sampleSize;
+                pw.printf(particleFormat, p.getId(), p.getX(), p.getY(), p.getVx(), p.getVy(), p.getMass(), p.getRadius(), color, 1 - color, 1 - color);
             }
+
+            // Pared de abajo y arriba
+            for (int i = 0; i < amountOfParticlesX; i++) {
+                pw.printf(particleFormat, -1, i * wallParticlesDiameter, 0D, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D);
+                pw.printf(particleFormat, -1, i * wallParticlesDiameter, universeHeight, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D);
+            }
+
+            // Paredes derecha izq
+            for (int i = 0; i < amountOfParticlesY; i++) {
+                pw.printf(particleFormat, -1, 0D, i * wallParticlesDiameter, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D);
+                pw.printf(particleFormat, -1, universeWidth, i * wallParticlesDiameter, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D);
+            }
+
+            // Paredes abertura
+            for (int i = 1; i <= amountOfParticlesOpening; i++) {
+                pw.printf(particleFormat, -1, universeWidth / 2, i * wallParticlesDiameter, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D);
+                pw.printf(particleFormat, -1, universeWidth / 2, universeHeight - i * wallParticlesDiameter, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D);
+            }
+
+
+
         } catch (IOException ex) {
             System.out.println("Unable to save output: " + ex.getMessage());
         }

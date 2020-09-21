@@ -1,8 +1,11 @@
 package ar.edu.itba.ss;
 
+import java.util.logging.Logger;
+
 public class Main {
 
     public static Configuration activeConfig;
+
 
     public static void main(String[] args) {
         activeConfig = createConfig();
@@ -15,7 +18,7 @@ public class Main {
         builder.name("test")
                 .outFolder("./output/")
                 .maxIterations(100)
-                .sampleSize(5);
+                .sampleSize(10);
 
         return builder.get();
     }
