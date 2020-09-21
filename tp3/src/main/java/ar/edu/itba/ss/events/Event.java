@@ -1,4 +1,8 @@
-package ar.edu.itba.ss;
+package ar.edu.itba.ss.events;
+
+import ar.edu.itba.ss.Particle;
+
+import java.util.List;
 
 public abstract class Event implements Comparable<Event>{
     private double time;
@@ -24,4 +28,8 @@ public abstract class Event implements Comparable<Event>{
         the same as when the event was created
      */
     public abstract  boolean wasSuperveningEvent();
+
+    public abstract List<Particle> getParticles();
+
+    public abstract void applyBounce();
 }

@@ -35,9 +35,17 @@ public class Particle {
         assuming it follows a straight-line trajectory. If the particle never collides with a horizontal wall, return a negative
         number.
      */
+
+    // TODO: Checkear como collisionaria contra la parte de arriba de la abertura ( que en teoria no tiene ancho)
     public double collidesY() {
-        // TODO
-        return 1;
+        if (vy == 0) {
+            return -1; // If we're not moving on the Y axis we will never crash a wall
+        } else if ( vy < 0 ) {
+            return ((radius - y) / vy); // radius - vy is negative, when divided by vy gives us positive time
+        } else {
+            // vy > 0
+            return (Main.activeConfig.getUniverseHeight() - radius - y) / vy;
+        }
     }
 
 
@@ -46,7 +54,7 @@ public class Particle {
         b, assuming both follow straight-line trajectories. If the two particles never collide, return a negative value.
      */
     public double collides(Particle b) {
-        // TODO
+        
         return 1;
     }
 
@@ -60,7 +68,24 @@ public class Particle {
     }
     // update both particles to simulate them bouncing off each other.
     public void bounce(Particle b){
+        double deltaX = b.x - x;
+        double deltaY = b.y - y;
+        double deltaVX = b.vx - vx;
+        double deltaVY = b.vy -vy;
+        double sigma = 2 * radius;
 
+        double deltaDot = deltaVX * deltaX + deltaVY * deltaY;
+        double j =  2 * mass * mass * deltaDot / (sigma *  (2 * mass));
+        double jx = j * deltaX / sigma;
+        double jy = j * deltaY / sigma;
+
+        vx = vx + jx / mass;
+        vy = vy + jy / mass;
+        b.vx = b.vx - jx / mass;
+        b.vy = b.vy - jy / mass;
+
+        collisionCount++;
+        b.collisionCount++;
     }
 
     // return the total number of collisions involving this particle.
@@ -112,5 +137,19 @@ public class Particle {
 
     public double getVy() {
         return vy;
+    }
+
+    public boolean overlaps(double x, double y) {
+        return distance(x, y) <= 2*radius;
+    }
+
+    public double distance (double x, double y) {
+        double deltaX = Math.abs(x - this.x);
+        double deltaY = Math.abs(y - this.y);
+        return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    }
+
+    public double distance( Particle p) {
+        return distance(p.getX(), p.getY());
     }
 }

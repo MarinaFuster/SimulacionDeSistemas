@@ -1,4 +1,9 @@
-package ar.edu.itba.ss;
+package ar.edu.itba.ss.events;
+
+import ar.edu.itba.ss.Particle;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class ParticleEvent extends Event{
     private final Particle particleA;
@@ -18,5 +23,16 @@ public class ParticleEvent extends Event{
     public boolean wasSuperveningEvent() {
         return particleA.getCollisionCount() != initCollisionCountA ||
                 particleB.getCollisionCount() != initCollisionCountB;
+    }
+
+    @Override
+    public List<Particle> getParticles() {
+        return Arrays.asList(particleA, particleB);
+    }
+
+
+    @Override
+    public void applyBounce() {
+        particleA.bounce(particleB);
     }
 }

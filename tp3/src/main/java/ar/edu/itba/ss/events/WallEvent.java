@@ -1,8 +1,13 @@
-package ar.edu.itba.ss;
+package ar.edu.itba.ss.events;
 
-public class WallEvent extends Event{
+import ar.edu.itba.ss.Particle;
 
-    private final Particle particle;
+import java.util.Arrays;
+import java.util.List;
+
+public abstract class WallEvent extends Event{
+
+    /* package */ final Particle particle;
     private final int initCollisionCount;
 
     public WallEvent(double time, Particle particle) {
@@ -14,5 +19,10 @@ public class WallEvent extends Event{
     @Override
     public boolean wasSuperveningEvent() {
         return particle.getCollisionCount() != initCollisionCount;
+    }
+
+    @Override
+    public List<Particle> getParticles() {
+        return Arrays.asList(particle);
     }
 }

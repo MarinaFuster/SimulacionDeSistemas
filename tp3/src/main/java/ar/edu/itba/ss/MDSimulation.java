@@ -1,5 +1,7 @@
 package ar.edu.itba.ss;
 
+import ar.edu.itba.ss.events.*;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -37,7 +39,7 @@ public class MDSimulation {
     public void run() {
 
         initializeParticles();
-        addAllFutureColitions();
+        addAllFutureColitions(particles);
 
 
         int i = 0;
@@ -51,39 +53,46 @@ public class MDSimulation {
 
             double nextEventTime = nextEvent.getTime();
 
+
             // Advance all particles to time t along a straight line trajectory.
             for(Particle p : particles) {
                 p.advanceStraight(nextEventTime);
             }
 
             // Update the velocities of the two colliding particles i and j according to the laws of elastic collision
-
+            nextEvent.applyBounce();
 
             // Determine all future collisions that would occur involving either i or j, assuming all particles move in straight
             // line trajectories from time t onwards. Insert these events onto the priority queue.
-
+            addAllFutureColitions(nextEvent.getParticles());
 
             if (events.isEmpty()) throw new IllegalStateException("No events remaining!");
+            if ( i % Constants.SAVE_FREQUENCY == 0) {
+                save();
+            }
             i++;
+
         }
     }
 
 
 
-    public void addAllFutureColitions() {
-        double t;
-        for (Particle p : particles) {
+    public void addAllFutureColitions(List<Particle> toAddCollisionsList) {
+        double t, t2;
+        for (Particle p : toAddCollisionsList) {
           // Add collisions against walls
             t = p.collidesX();
-            if (t >= 0) {
-                events.add(new WallEvent(t, p));
+            t2 = p.collidesY();
+            if (t == t2 && t >= 0) {
+                events.add(new WallDiagonalEvent(t, p));
+            } else {
+                if (t >= 0) {
+                    events.add(new WallXEvent(t, p));
+                }
+                if ( t2 >= 0) {
+                    events.add(new WallYEvent(t, p));
+                }
             }
-
-            t = p.collidesY();
-            if ( t >= 0) {
-                events.add(new WallEvent(t, p));
-            }
-
 
           // Add collisions againsts other particles
           for (Particle p2 : particles) {
@@ -111,8 +120,26 @@ public class MDSimulation {
     }
 
     public Particle getParticle(int id) {
-        // TODO: Get new Particle correctly
-        return new Particle(id, 0, 0, 0, 0);
+        double speedAngle = Math.random() * (2 * Math.PI);
+        double vy = Math.cos(speedAngle) * Constants.INITIAL_VELOCITY;
+        double vx = Math.sin(speedAngle) * Constants.INITIAL_VELOCITY;
+        assert (Math.sqrt(vx*vx+vy*vy) - Constants.INITIAL_VELOCITY) < Constants.EPSILON;
+
+        double y;
+        double x;
+        boolean overlaps = false;
+        do {
+            y = Math.random() * (universeHeight - 2 * Constants.PARTICLE_RADIUS) + Constants.PARTICLE_RADIUS;
+            x = Math.random() * (openingX - 2 * Constants.PARTICLE_RADIUS) + Constants.PARTICLE_RADIUS;
+            for (Particle p : particles) {
+                if (p.overlaps(x, y)) {
+                    overlaps = true;
+                    break;
+                }
+            }
+        } while(overlaps);
+
+        return new Particle(id, x, y, vx, vy);
     }
 
     public void save(){

@@ -1,12 +1,15 @@
 package ar.edu.itba.ss;
 
 public class Main {
+
+    public static Configuration activeConfig;
+
     public static void main(String[] args) {
-        runSimulation(getConfig());
+        activeConfig = createConfig();
+        runSimulation();
     }
 
-
-    public static Configuration getConfig() {
+    public static Configuration createConfig() {
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
         builder.name("test")
@@ -17,8 +20,8 @@ public class Main {
         return builder.get();
     }
 
-    public static void runSimulation(Configuration config) {
-        MDSimulation simulation = new MDSimulation(config);
+    public static void runSimulation() {
+        MDSimulation simulation = new MDSimulation(activeConfig);
         simulation.run();
     }
 }
