@@ -12,7 +12,7 @@ public class WallDiagonalEvent extends WallEvent{
     @Override
     public void applyBounce() {
         // TODO diagonal: Creo que es tan simple como descomentar estos 2 metodos de abajo?
-//        this.particle.bounceX();
-//        this.particle.bounceY();
+        this.particle.bounceX();
+        this.particle.bounceY();
     }
 }

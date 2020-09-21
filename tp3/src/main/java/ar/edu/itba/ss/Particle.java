@@ -3,8 +3,8 @@ package ar.edu.itba.ss;
 import java.util.Objects;
 
 public class Particle {
-    private final double radius = Constants.PARTICLE_RADIUS;
-    private final double mass = Constants.PARTICLE_MASS;
+    private double radius = Constants.PARTICLE_RADIUS;
+    private double mass = Constants.PARTICLE_MASS;
 
     private double x,y, vx, vy;
     private int collisionCount = 0;
@@ -26,8 +26,33 @@ public class Particle {
 
     */
     public double collidesX() {
-        // TODO
-        return 1;
+        double universeWidth = Main.activeConfig.getUniverseWidth();
+        double minPoint = Main.activeConfig.getUniverseHeight() / 2 - Main.activeConfig.getOpeningSize() / 2;
+        double maxPoint = Main.activeConfig.getUniverseHeight() / 2 + Main.activeConfig.getOpeningSize() / 2;
+        double distanceToCenter, timeToCenter, yPosAtCenter;
+        if ( vx == 0) {
+            return  -1;
+        } else if( vx < 0) {
+            // velocidad negativa
+            distanceToCenter =  (radius + universeWidth / 2) - x;
+            timeToCenter = distanceToCenter / vx;
+            yPosAtCenter = y + timeToCenter * vy;
+            if (timeToCenter > 0 && (yPosAtCenter > maxPoint || yPosAtCenter < minPoint)) {
+                return timeToCenter;
+            } else {
+                return (radius - x) / vx;
+            }
+        } else {
+            // velocidad positiva
+            distanceToCenter = (universeWidth / 2 ) - radius - x;
+            timeToCenter = distanceToCenter / vx;
+            yPosAtCenter = y + timeToCenter * vy;
+            if (timeToCenter > 0 && (yPosAtCenter > maxPoint || yPosAtCenter < minPoint)) {
+                return timeToCenter;
+            } else {
+                return (universeWidth - radius - x) / vx;
+            }
+        }
     }
 
     /*
@@ -54,17 +79,31 @@ public class Particle {
         b, assuming both follow straight-line trajectories. If the two particles never collide, return a negative value.
      */
     public double collides(Particle b) {
-        
-        return 1;
+        double deltaX = b.x - x;
+        double deltaY = b.y - y;
+        double deltaVX = b.vx - vx;
+        double deltaVY = b.vy -vy;
+        double sigma = radius + b.radius;
+
+        double deltaVR = deltaVX * deltaX + deltaVY * deltaY;
+        double deltaVV = deltaVX * deltaVX + deltaVY * deltaVY;
+        double deltaRR = deltaX * deltaX + deltaY * deltaY;
+
+        double d = deltaVR * deltaVR - deltaVV * (deltaRR - sigma * sigma);
+        if(deltaVR >= 0 || d < 0) {
+            return -1;
+        } else {
+            return -1 * (deltaVR + Math.sqrt(d)) / deltaVV;
+        }
     }
 
     //  update the invoking particle to simulate it bouncing off a vertical wall.
     public void bounceX() {
-
+        vx = - vx;
     }
     // update the invoking particle to simulate it bouncing off a horizontal wall.
     public void bounceY() {
-
+        vy = -vy;
     }
     // update both particles to simulate them bouncing off each other.
     public void bounce(Particle b){
@@ -72,20 +111,25 @@ public class Particle {
         double deltaY = b.y - y;
         double deltaVX = b.vx - vx;
         double deltaVY = b.vy -vy;
-        double sigma = 2 * radius;
+        double sigma = radius + b.radius;
 
         double deltaDot = deltaVX * deltaX + deltaVY * deltaY;
-        double j =  2 * mass * mass * deltaDot / (sigma *  (2 * mass));
+        double j =  2 * mass * b.mass * deltaDot / (sigma *  (mass + b.mass));
         double jx = j * deltaX / sigma;
         double jy = j * deltaY / sigma;
 
         vx = vx + jx / mass;
         vy = vy + jy / mass;
-        b.vx = b.vx - jx / mass;
-        b.vy = b.vy - jy / mass;
-
         collisionCount++;
-        b.collisionCount++;
+
+        // This is to ignore the corner particles
+        if(b.radius != 0) {
+            b.vx = b.vx - jx / b.mass;
+            b.vy = b.vy - jy / b.mass;
+            b.collisionCount++;
+        }
+
+
     }
 
     // return the total number of collisions involving this particle.
@@ -151,5 +195,13 @@ public class Particle {
 
     public double distance( Particle p) {
         return distance(p.getX(), p.getY());
+    }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
+
+    public void setMass(double mass) {
+        this.mass = mass;
     }
 }

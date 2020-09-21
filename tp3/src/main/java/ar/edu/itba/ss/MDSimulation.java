@@ -5,6 +5,8 @@ import ar.edu.itba.ss.events.*;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -14,6 +16,7 @@ public class MDSimulation {
     private final PriorityQueue<Event> events = new PriorityQueue<Event>();
 
     private final List<Particle> particles;
+    private final List<Particle> particlesWithCorners;
     private final double universeWidth;
     private final double universeHeight;
     private final double openingSize;
@@ -24,7 +27,8 @@ public class MDSimulation {
 
     public MDSimulation(Configuration config) {
         // Arraylist for faster iterations
-        this.particles = new ArrayList<Particle>(config.getSampleSize());
+        this.particles = new ArrayList<>(config.getSampleSize());
+        this.particlesWithCorners = new ArrayList<>(config.getSampleSize() + 2);
 
         universeHeight = config.getUniverseHeight();
         universeWidth = config.getUniverseWidth();
@@ -37,14 +41,16 @@ public class MDSimulation {
 
 
     public void run() {
-
         initializeParticles();
         addAllFutureColitions(particles);
-
+        try {
+            Files.deleteIfExists(Paths.get(getOutputFileName()));
+        } catch (IOException e) {
+            System.out.println("Unable to delete previously existing dynamic config");
+        }
 
         int i = 0;
         while(i < maxIterations) {
-
             Event nextEvent = null;
             // Get next valid event
             while(!events.isEmpty() && (nextEvent = events.poll()).wasSuperveningEvent()) {
@@ -73,6 +79,7 @@ public class MDSimulation {
             i++;
 
         }
+        System.out.println("All done!");
     }
 
 
@@ -95,16 +102,19 @@ public class MDSimulation {
             }
 
           // Add collisions againsts other particles
-          for (Particle p2 : particles) {
+            List<Particle> particlesCopy = new ArrayList<>(particles.size()+2);
+
+            for (Particle p2 : particlesWithCorners) {
             // In order to repeat a.crash(b) and b.crash(a), we only add it if the id is lower
             // TODO: Check if this is correct
-              if(p.getId() < p2.getId()) {
+                if(p.getId() < p2.getId()) {
                   t = p.collides(p2);
                   if (t >= 0) {
-                      events.add(new ParticleEvent(p.collides(p2), p, p2));
+                    events.add(new ParticleEvent(p.collides(p2), p, p2));
                   }
-              }
-          }
+                }
+
+            }
         }
     }
 
@@ -115,8 +125,16 @@ public class MDSimulation {
     // - They must not be overlapped! (check overlap formula from TP1)
     public void initializeParticles() {
         for (int i = 0; i < sampleSize; i++) {
-            particles.set(i, getParticle(i));
+            particles.add(i, getParticle(i));
+            particlesWithCorners.add(i, particles.get(i));
         }
+
+        Particle corner1 = new Particle(sampleSize - 2, universeWidth / 2, universeHeight / 2 + openingSize / 2, 0, 0);
+        Particle corner2 = new Particle(sampleSize - 2, universeWidth / 2, universeHeight / 2 - openingSize / 2, 0, 0);
+        corner1.setRadius(0);
+        corner2.setRadius(0);
+        particlesWithCorners.set(corner1.getId(), corner1);
+        particlesWithCorners.set(corner2.getId(), corner2);
     }
 
     public Particle getParticle(int id) {
@@ -127,10 +145,12 @@ public class MDSimulation {
 
         double y;
         double x;
-        boolean overlaps = false;
+        boolean overlaps;;
         do {
+
             y = Math.random() * (universeHeight - 2 * Constants.PARTICLE_RADIUS) + Constants.PARTICLE_RADIUS;
             x = Math.random() * (openingX - 2 * Constants.PARTICLE_RADIUS) + Constants.PARTICLE_RADIUS;
+            overlaps = false;
             for (Particle p : particles) {
                 if (p.overlaps(x, y)) {
                     overlaps = true;

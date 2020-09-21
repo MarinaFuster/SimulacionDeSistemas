@@ -13,14 +13,15 @@ public class Main {
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
         builder.name("test")
-                .outFolder("./")
+                .outFolder("./output/")
                 .maxIterations(100)
-                .sampleSize(200);
+                .sampleSize(5);
 
         return builder.get();
     }
 
     public static void runSimulation() {
+        activeConfig.save();
         MDSimulation simulation = new MDSimulation(activeConfig);
         simulation.run();
     }

@@ -1,5 +1,11 @@
 package ar.edu.itba.ss;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 public class Configuration {
 
 
@@ -47,5 +53,33 @@ public class Configuration {
 
     public String getOutFolder() {
         return outFolder;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%f\n%f\n%f\n%d\n%d\n%s\n%s\n", universeWidth, universeHeight, openingSize, sampleSize, maxIterations, name, outFolder);
+    }
+
+    public void save() {
+
+        String outF = this.outFolder;
+        if (outF.charAt(outFolder.length() - 1) != '/') {
+            outF = outFolder + "/";
+        }
+        String outPath =  String.format("%s%s_static.xyz", outF, name);
+
+        try {
+            Files.deleteIfExists(Paths.get(outPath));
+        } catch (IOException e) {
+            System.out.println("Unable to delete previously existing file");
+            throw new RuntimeException();
+        }
+        try (FileWriter fw = new FileWriter(outPath, false)) {
+            PrintWriter pw = new PrintWriter(fw);
+            pw.printf("%s", this.toString());
+
+        } catch (IOException ex) {
+            System.out.println("Unable to save static file");
+        }
     }
 }
