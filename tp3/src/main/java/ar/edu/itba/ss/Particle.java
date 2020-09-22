@@ -108,24 +108,28 @@ public class Particle {
 
     // update both particles to simulate them bouncing off each other.
     public void bounce(Particle b){
+
+        double deltaX = b.x - x;
+        double deltaY = b.y - y;
+        double deltaVX = b.vx - vx;
+        double deltaVY = b.vy -vy;
+        double sigma = radius + b.radius;
+
+        double deltaDot = deltaVX * deltaX + deltaVY * deltaY;
+
         // Situation is different with corner particles
         if(b.radius == 0D) {
-            vx = -vx;
-            vy = -vy;
+            double j = 2 * mass * deltaDot / sigma;
+            double jx = j * deltaX / sigma;
+            double jy = j * deltaY / sigma;
+            vx = vx + jx / mass;
+            vy = vy + jy / mass;
             collisionCount++;
         }
         else {
-            double deltaX = b.x - x;
-            double deltaY = b.y - y;
-            double deltaVX = b.vx - vx;
-            double deltaVY = b.vy -vy;
-            double sigma = radius + b.radius;
-
-            double deltaDot = deltaVX * deltaX + deltaVY * deltaY;
             double j =  2 * mass * b.mass * deltaDot / (sigma *  (mass + b.mass));
             double jx = j * deltaX / sigma;
             double jy = j * deltaY / sigma;
-
             vx = vx + jx / mass;
             vy = vy + jy / mass;
             collisionCount++;
