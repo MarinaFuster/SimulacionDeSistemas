@@ -18,7 +18,6 @@ public class Particle {
         this.vy = vy;
     }
 
-
     /*
         public double collidesX(): return the duration of time until the invoking particle collides with a vertical wall,
         assuming it follows a straight-line trajectory. If the particle never collides with a vertical wall, return a negative
@@ -60,8 +59,6 @@ public class Particle {
         assuming it follows a straight-line trajectory. If the particle never collides with a horizontal wall, return a negative
         number.
      */
-
-    // TODO: Checkear como collisionaria contra la parte de arriba de la abertura ( que en teoria no tiene ancho)
     public double collidesY() {
         if (vy == 0) {
             return -1; // If we're not moving on the Y axis we will never crash a wall
@@ -99,45 +96,44 @@ public class Particle {
 
     //  update the invoking particle to simulate it bouncing off a vertical wall.
     public void bounceX() {
-        System.out.println("Particle " + id + " bounced with wall X");
-        System.out.printf("%f\t%f\n", x, y);
         vx = - vx;
         collisionCount++;
     }
+
     // update the invoking particle to simulate it bouncing off a horizontal wall.
     public void bounceY() {
-        System.out.println("Particle " + id + " bounced with wall Y");
-        System.out.printf("%f\t%f\n", x, y);
         vy = -vy;
         collisionCount++;
     }
+
     // update both particles to simulate them bouncing off each other.
     public void bounce(Particle b){
-        System.out.println("Particle " + id + " bounced with particle " + b.id);
-        System.out.printf("%f\t%f\n", x, y);
-        double deltaX = b.x - x;
-        double deltaY = b.y - y;
-        double deltaVX = b.vx - vx;
-        double deltaVY = b.vy -vy;
-        double sigma = radius + b.radius;
+        // Situation is different with corner particles
+        if(b.radius == 0D) {
+            vx = -vx;
+            vy = -vy;
+            collisionCount++;
+        }
+        else {
+            double deltaX = b.x - x;
+            double deltaY = b.y - y;
+            double deltaVX = b.vx - vx;
+            double deltaVY = b.vy -vy;
+            double sigma = radius + b.radius;
 
-        double deltaDot = deltaVX * deltaX + deltaVY * deltaY;
-        double j =  2 * mass * b.mass * deltaDot / (sigma *  (mass + b.mass));
-        double jx = j * deltaX / sigma;
-        double jy = j * deltaY / sigma;
+            double deltaDot = deltaVX * deltaX + deltaVY * deltaY;
+            double j =  2 * mass * b.mass * deltaDot / (sigma *  (mass + b.mass));
+            double jx = j * deltaX / sigma;
+            double jy = j * deltaY / sigma;
 
-        vx = vx + jx / mass;
-        vy = vy + jy / mass;
-        collisionCount++;
+            vx = vx + jx / mass;
+            vy = vy + jy / mass;
+            collisionCount++;
 
-        // This is to ignore the corner particles
-        if(b.radius != 0D) {
             b.vx = b.vx - jx / b.mass;
             b.vy = b.vy - jy / b.mass;
             b.collisionCount++;
         }
-
-
     }
 
     // return the total number of collisions involving this particle.
@@ -201,15 +197,7 @@ public class Particle {
         return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
     }
 
-    public double distance( Particle p) {
-        return distance(p.getX(), p.getY());
-    }
-
     public void setRadius(double radius) {
         this.radius = radius;
-    }
-
-    public void setMass(double mass) {
-        this.mass = mass;
     }
 }

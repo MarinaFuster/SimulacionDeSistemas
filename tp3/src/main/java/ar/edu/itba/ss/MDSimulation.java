@@ -8,13 +8,12 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 
 public class MDSimulation {
 
-    private final PriorityQueue<Event> events = new PriorityQueue<Event>();
+    private final PriorityQueue<Event> events = new PriorityQueue<>();
 
     private final List<Particle> particles;
     private final List<Particle> particlesWithCorners;
@@ -24,6 +23,7 @@ public class MDSimulation {
     private final double openingX;
     private final int maxIterations;
     private final int sampleSize;
+    private double systemTime;
     private final Configuration configuration;
 
     public MDSimulation(Configuration config) {
@@ -38,6 +38,7 @@ public class MDSimulation {
         maxIterations = config.getMaxIterations();
         sampleSize = config.getSampleSize();
         configuration = config;
+        systemTime = 0D;
     }
 
 
@@ -53,6 +54,7 @@ public class MDSimulation {
         int i = 0;
         while(i < maxIterations) {
             Event nextEvent = null;
+
             // Get next valid event
             while(!events.isEmpty() && (nextEvent = events.poll()).wasSuperveningEvent()) {
                 // Do nothing
@@ -60,11 +62,11 @@ public class MDSimulation {
 
             double nextEventTime = nextEvent.getTime();
 
-
             // Advance all particles to time t along a straight line trajectory.
             for(Particle p : particles) {
-                p.advanceStraight(nextEventTime);
+                p.advanceStraight(nextEventTime-systemTime);
             }
+            systemTime = nextEventTime;
 
             // Update the velocities of the two colliding particles i and j according to the laws of elastic collision
             nextEvent.applyBounce();
@@ -86,41 +88,42 @@ public class MDSimulation {
 
 
     public void addAllFutureColitions(List<Particle> toAddCollisionsList) {
-        double t, t2;
+        double collisionXDeltaT, collisionYDeltaT;
         for (Particle p : toAddCollisionsList) {
-          // Add collisions against walls
-            t = p.collidesX();
-            t2 = p.collidesY();
-            if (t == t2 && t >= 0) {
-                events.add(new WallDiagonalEvent(t, p));
+
+            // Get deltaT for both collisions
+            collisionXDeltaT = p.collidesX();
+            collisionYDeltaT = p.collidesY();
+
+            // If both occur at same time, we add a diagonal event
+            if (collisionXDeltaT == collisionYDeltaT && collisionXDeltaT >= 0D) {
+                events.offer(new WallDiagonalEvent(systemTime+collisionXDeltaT, p));
             } else {
-                if (t >= 0) {
-                    events.add(new WallXEvent(t, p));
+                if (collisionXDeltaT >= 0) { // If collision X can happen, we add one
+                    events.offer(new WallXEvent(systemTime+collisionXDeltaT, p));
                 }
-                if ( t2 >= 0) {
-                    events.add(new WallYEvent(t2, p));
+                if ( collisionYDeltaT >= 0) { // If collision Y can happen, we add one
+                    events.offer(new WallYEvent(systemTime+collisionYDeltaT, p));
                 }
             }
 
-          // Add collisions againsts other particles
+           // Add collisions against other particles
             List<Particle> particlesCopy = new ArrayList<>(particles.size()+2);
 
-            for (Particle p2 : particlesWithCorners) {
-            // In order to repeat a.crash(b) and b.crash(a), we only add it if the id is lower
-            // TODO: Check if this is correct
-                if(p.getId() < p2.getId()) {
-                  t = p.collides(p2);
-                  if (t >= 0) {
-                    events.add(new ParticleEvent(p.collides(p2), p, p2));
+            for (Particle otherP : particlesWithCorners) {
+                // In order to repeat a.crash(b) and b.crash(a), we only add it if the ID is lower
+                if(p.getId() < otherP.getId()) {
+                  double collidesDeltaT = p.collides(otherP);
+                  if (collidesDeltaT >= 0) {
+                    events.add(new ParticleEvent(collidesDeltaT+systemTime, p, otherP));
                   }
                 }
-
             }
         }
     }
 
 
-    // Here we generate our N particles, incluiding their initial position and speed:
+    // Here we generate our N particles, including their initial position and speed:
     // - They must be on the left side of the opening
     // - They have a total initial velocity of Constants.INITIAL_VELOCITY
     // - They must not be overlapped! (check overlap formula from TP1)
@@ -158,7 +161,6 @@ public class MDSimulation {
                 }
             }
         } while(overlaps);
-
         return new Particle(id, x, y, vx, vy);
     }
 

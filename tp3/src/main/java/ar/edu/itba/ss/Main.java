@@ -1,7 +1,5 @@
 package ar.edu.itba.ss;
 
-import java.util.logging.Logger;
-
 public class Main {
 
     public static Configuration activeConfig;
@@ -17,8 +15,8 @@ public class Main {
 
         builder.name("test")
                 .outFolder("./output/")
-                .maxIterations(100)
-                .sampleSize(10);
+                .maxIterations(150)
+                .sampleSize(30);
 
         return builder.get();
     }
