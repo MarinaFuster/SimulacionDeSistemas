@@ -108,7 +108,6 @@ public class Particle {
 
     // update both particles to simulate them bouncing off each other.
     public void bounce(Particle b){
-
         double deltaX = b.x - x;
         double deltaY = b.y - y;
         double deltaVX = b.vx - vx;

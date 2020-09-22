@@ -16,8 +16,9 @@ public class Configuration {
     private final int maxIterations;
     private final String name;
     private final String outFolder;
+    private final  double initialVelocity;
 
-    public Configuration(double universeWidth, double universeHeight, double openingSize, int sampleSize, int maxIterations, String name, String outFolder) {
+    public Configuration(double universeWidth, double universeHeight, double openingSize, int sampleSize, int maxIterations, String name, String outFolder, double initialVelocity) {
         this.universeWidth = universeWidth;
         this.universeHeight = universeHeight;
         this.openingSize = openingSize;
@@ -25,6 +26,7 @@ public class Configuration {
         this.maxIterations = maxIterations;
         this.name = name;
         this.outFolder = outFolder;
+        this.initialVelocity =initialVelocity;
     }
 
     public double getUniverseWidth() {
@@ -55,9 +57,13 @@ public class Configuration {
         return outFolder;
     }
 
+    public double getInitialVelocity() {
+        return initialVelocity;
+    }
+
     @Override
     public String toString() {
-        return String.format("%f\n%f\n%f\n%d\n%d\n%s\n%s\n", universeWidth, universeHeight, openingSize, sampleSize, maxIterations, name, outFolder);
+        return String.format("%f\n%f\n%f\n%d\n%d\n%s\n%s\n%f\n", universeWidth, universeHeight, openingSize, sampleSize, maxIterations, name, outFolder, initialVelocity);
     }
 
     public void save() {

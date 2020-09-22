@@ -52,7 +52,9 @@ public class MDSimulation {
         }
         save();
         int i = 0;
-        while(i < maxIterations) {
+
+        double fp = getFp();
+        while(!stable()) {
             Event nextEvent = null;
 
             // Get next valid event
@@ -82,6 +84,9 @@ public class MDSimulation {
             i++;
 
         }
+        double stabilizationTime = systemTime;
+
+        writeStatistics(0D, stabilizationTime);
         System.out.println("All done!");
     }
 
@@ -206,12 +211,40 @@ public class MDSimulation {
         }
     }
 
+
+    private void writeStatistics(double pressure, double stabilizationTime) {
+        try (FileWriter fw = new FileWriter(Constants.STATISTICS_FILEPATH, true);) {
+
+            String statisticsFormat = "%f,%f,%f,%d,%f,%f\n";
+            PrintWriter pw = new PrintWriter(fw);
+
+            pw.printf(statisticsFormat,
+                    pressure,
+                    configuration.getInitialVelocity(),
+                    universeHeight * universeWidth,
+                    particles.size(),
+                    openingSize,
+                    stabilizationTime);
+        } catch ( IOException ex) {
+            System.out.println("[ERROR]Unable to write statistics!!");
+        }
+    }
+
     private String getOutputFileName() {
         String outFolder = configuration.getOutFolder();
         if (outFolder.charAt(outFolder.length() - 1) != '/') {
             outFolder = outFolder + "/";
         }
         return String.format("%s%s_dynamic.xyz", outFolder, configuration.getName());
+    }
+
+
+    private double getFp() {
+        return particles.stream().filter(p-> p.getX() > openingX).count() / (double)particles.size();
+    }
+
+    private boolean stable() {
+        return Math.abs(getFp() - 0.5) <= Constants.FP_EPSILON;
     }
 
 

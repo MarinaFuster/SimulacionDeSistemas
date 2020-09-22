@@ -9,9 +9,10 @@ public class ConfigurationBuilder {
     private int maxIterations;
     private String name;
     private String outFolder;
+    private double initialVelocity = Constants.INITIAL_VELOCITY;
 
     public Configuration get() {
-        return  new Configuration(universeWidth, universeHeight, openingSize, sampleSize, maxIterations, name, outFolder);
+        return  new Configuration(universeWidth, universeHeight, openingSize, sampleSize, maxIterations, name, outFolder, initialVelocity);
     }
 
     public ConfigurationBuilder maxIterations(int maxIterations) {
@@ -46,6 +47,11 @@ public class ConfigurationBuilder {
 
     public ConfigurationBuilder outFolder(String outFolder) {
         this.outFolder = outFolder;
+        return this;
+    }
+
+    public ConfigurationBuilder initialVelocity(double initialVelocity) {
+        this.initialVelocity = initialVelocity;
         return this;
     }
 }
