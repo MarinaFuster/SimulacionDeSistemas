@@ -25,6 +25,7 @@ public class MDSimulation {
     private final int maxIterations;
     private final int sampleSize;
     private double systemTime;
+    private double fp;
     private final Configuration configuration;
 
     public MDSimulation(Configuration config) {
@@ -52,10 +53,11 @@ public class MDSimulation {
             System.out.println("Unable to delete previously existing dynamic config");
         }
 
+        fp = getFp();
         save();
         int i = 0;
 
-        double fp = getFp();
+
         while(!stable()) {
             Event nextEvent = null;
 
@@ -71,6 +73,7 @@ public class MDSimulation {
                 p.advanceStraight(nextEventTime-systemTime);
             }
             systemTime = nextEventTime;
+            fp = getFp();
 
             // Update the velocities of the two colliding particles i and j according to the laws of elastic collision
             nextEvent.applyBounce();
@@ -181,7 +184,7 @@ public class MDSimulation {
             long amountOfParticlesY = Math.round(universeHeight / wallParticlesDiameter);
             long amountOfParticlesOpening = Math.round(((universeHeight - openingSize) / wallParticlesDiameter)  / 2);
             long totalParticles = amountOfParticlesX * 2 + amountOfParticlesY * 2 + 2 * amountOfParticlesOpening + sampleSize;
-            pw.printf(Locale.US, "%d\n%f\n", totalParticles, systemTime);
+            pw.printf(Locale.US, "%d\n%f\t%f\n", totalParticles, systemTime, fp);
             for (Particle p : particles) {
                 // TODO: Check if we add RGB here
                 double color = p.getId() / (double)sampleSize;
@@ -247,7 +250,7 @@ public class MDSimulation {
     }
 
     private boolean stable() {
-        return Math.abs(getFp() - 0.5) <= Constants.FP_EPSILON;
+        return Math.abs(fp - 0.5) <= Constants.FP_EPSILON;
     }
 
 
