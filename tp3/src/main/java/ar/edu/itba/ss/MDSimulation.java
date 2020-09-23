@@ -28,6 +28,8 @@ public class MDSimulation {
     private double fp;
     private final Configuration configuration;
 
+    public static double impulse;
+
     public MDSimulation(Configuration config) {
         // Arraylist for faster iterations
         this.particles = new ArrayList<>(config.getSampleSize());
@@ -45,6 +47,7 @@ public class MDSimulation {
 
 
     public void run() {
+
         initializeParticles();
         addAllFutureColitions(particles);
         try {
@@ -89,9 +92,35 @@ public class MDSimulation {
             i++;
 
         }
+        impulse = 0;
         double stabilizationTime = systemTime;
 
-        writeStatistics(0D, stabilizationTime);
+        while (systemTime - stabilizationTime < Constants.PRESSURE_TIME) {
+            Event nextEvent = null;
+
+            // Get next valid event
+            while(!events.isEmpty() && (nextEvent = events.poll()).wasSuperveningEvent()) {
+                // Do nothing
+            }
+            double nextEventTime = nextEvent.getTime();
+            // Advance all particles to time t along a straight line trajectory.
+            for(Particle p : particles) {
+                p.advanceStraight(nextEventTime-systemTime);
+            }
+            systemTime = nextEventTime;
+            // Update the velocities of the two colliding particles i and j according to the laws of elastic collision
+            nextEvent.applyBounce();
+
+            // Determine all future collisions that would occur involving either i or j, assuming all particles move in straight
+            // line trajectories from time t onwards. Insert these events onto the priority queue.
+            addAllFutureColitions(nextEvent.getParticles());
+
+            if (events.isEmpty()) throw new IllegalStateException("No events remaining!");
+        }
+
+        double deltaT = systemTime - stabilizationTime;
+        double pressure = impulse / deltaT / (2 * universeWidth);
+        writeStatistics(pressure, stabilizationTime);
         System.out.println("All done!");
     }
 

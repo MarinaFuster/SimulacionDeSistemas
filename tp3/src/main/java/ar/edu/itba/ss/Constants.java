@@ -12,4 +12,5 @@ public class Constants {
 
     public static final double FP_EPSILON = 0.05;
     public static final String STATISTICS_FILEPATH = "./statistics.csv";
+    public static final double PRESSURE_TIME = 10;
 }
