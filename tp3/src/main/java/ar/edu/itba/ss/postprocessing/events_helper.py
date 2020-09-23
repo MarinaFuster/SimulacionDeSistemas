@@ -1,14 +1,19 @@
+import matplotlib.pyplot as plt
+
 from enum import Enum
 
 folder = "src/main/java/ar/edu/itba/ss/postprocessing/results/"
+
+DELIMITER = ','
 
 class DynamicInputState(Enum):
     START = 1
     COMMENT = 2
     PARTICLE = 3
 
-def times_list(dynamic_input_path):
+def information_list(dynamic_input_path):
     times = []
+    fps = []
     state = DynamicInputState.START
     remaining = 0
     with open(dynamic_input_path) as in_f:
@@ -18,7 +23,9 @@ def times_list(dynamic_input_path):
                 state = DynamicInputState.COMMENT
             elif state == DynamicInputState.COMMENT:
                 if line != '\n':
-                    times.append(float(line))
+                    comments = line.split(DELIMITER)
+                    times.append(float(comments[0]))
+                    fps.append(float(comments[1]))
                 if remaining == 0:
                     state = DynamicInputState.START
                 else:
@@ -27,12 +34,12 @@ def times_list(dynamic_input_path):
                 remaining -= 1
                 if remaining == 0:
                     state = DynamicInputState.START
-    return times
+    return times, fps
 
 def animation_processing(dynamic_input_path, dynamic_output_path):
 
-    # List of events time
-    times = times_list(dynamic_input_path)
+    # List of events time and list of fps
+    times, fps = information_list(dynamic_input_path)
 
     if(times.__len__() == 0):
         print("No times registered")
@@ -64,7 +71,8 @@ def animation_processing(dynamic_input_path, dynamic_output_path):
                     state = DynamicInputState.COMMENT
                 # second line of comments will have time on it
                 elif state == DynamicInputState.COMMENT:
-                    time = float(line) # current time
+                    comments = line.split(DELIMITER)
+                    time = float(comments[0]) # current time
                     if time >= evenly_spaced_times[current_time_index]: # we will write this event
                         out_f.write(current_n_line)
                         out_f.write(line)
@@ -83,3 +91,26 @@ def animation_processing(dynamic_input_path, dynamic_output_path):
                     if remaining == 0:
                         state = DynamicInputState.START
                         write_particles = False
+
+def evolution_fps(tabiques, dynamic_input_paths, output_file_name):
+
+    if tabiques.__len__() != dynamic_input_paths.__len__():
+        print("Wrong arguments in evolution fps")
+        exit()
+
+    plt.xlabel("Tiempo [s]")
+    plt.ylabel("fp (fracción de partículas)")
+
+    for i in range(tabiques.__len__()):
+        times, fps = information_list(dynamic_input_paths[i])
+
+        if(times.__len__() == 0):
+            print("No times registered")
+            exit()
+    
+        plt.plot(times, fps,label="Apertura {} [m]".format(tabiques[i]))
+    
+    plt.legend()
+    filepath = folder + output_file_name
+    plt.savefig(filepath, bbox_inches="tight", pad_inches=0.3)
+    plt.clf()

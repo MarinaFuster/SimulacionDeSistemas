@@ -37,6 +37,12 @@ def dataframe_fp(statistics):
         plt.savefig(filepath)
         plt.clf()
 
+def calculate_energy(temperatures, n):
+    energy = []
+    for temp in temperatures:
+        energy.append((1/2)*n*temp*temp)
+    return np.array(energy)
+        
 
 def dataframe_gas_law(statistics):
     list_n = statistics.n.unique()
@@ -51,17 +57,19 @@ def dataframe_gas_law(statistics):
         # gets temperatures and pressure from file
         temperatures = np.array(filtered["temperatura"]) # x
         pressures = np.array(filtered["presion"]) # y
+        
+        energies = calculate_energy(temperatures, n)
 
         # least square method for linear regression
-        slope,intercept = np.polyfit(temperatures, pressures, 1)
+        slope,intercept = np.polyfit(energies, pressures, 1)
 
         filepath = folder + "dataframe_gas_law_{}".format(n)
 
         # plots and saves figure
         coef = "Coeficiente de regresión lineal: {:.4}".format(slope)
-        plt.xlabel("Velocidad inicial de partículas [m/s]" + "\n\n" + coef)
+        plt.xlabel("Energía del sistema [J]" + "\n\n" + coef)
         plt.ylabel("Presión del sistema [N*s]")
-        plt.plot(temperatures, pressures, 'o')
-        plt.plot(temperatures, slope*temperatures + intercept)
+        plt.plot(energies, pressures, 'o')
+        plt.plot(energies, slope*energies + intercept)
         plt.savefig(filepath, bbox_inches="tight", pad_inches=0.3)
         plt.clf()
