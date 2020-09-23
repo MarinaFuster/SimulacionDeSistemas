@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-folder = "src/main/java/ar/edu/itba/ss/postprocessing/results/"
+folder = "postprocessing/results/"
 
 def dataframe_fp(statistics):
     list_n = statistics.n.unique()

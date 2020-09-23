@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 from enum import Enum
 
-folder = "src/main/java/ar/edu/itba/ss/postprocessing/results/"
+folder = "postprocessing/results/"
 
 DELIMITER = ','
 
@@ -78,6 +78,8 @@ def animation_processing(dynamic_input_path, dynamic_output_path):
                         out_f.write(line)
                         write_particles = True   
                         current_time_index = current_time_index + 1
+                        if(evenly_spaced_times.__len__() == current_time_index):
+                            return
                     if remaining == 0:
                         write_particles = False
                         state = DynamicInputState.START
