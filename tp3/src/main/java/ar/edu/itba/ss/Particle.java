@@ -5,7 +5,8 @@ import java.util.Objects;
 public class Particle {
     private double radius = Constants.PARTICLE_RADIUS;
     private double mass = Constants.PARTICLE_MASS;
-
+    private final double x0, y0;
+    private boolean touchedWall = false;
     private double x,y, vx, vy;
     private int collisionCount = 0;
     private final int id;
@@ -16,6 +17,8 @@ public class Particle {
         this.y = y;
         this.vx = vx;
         this.vy = vy;
+        this.x0 = x;
+        this.y0 = y;
     }
 
     /*
@@ -98,12 +101,24 @@ public class Particle {
     public void bounceX() {
         vx = - vx;
         collisionCount++;
+        touchedWall = true;
     }
 
     // update the invoking particle to simulate it bouncing off a horizontal wall.
     public void bounceY() {
         vy = -vy;
         collisionCount++;
+        touchedWall = true;
+    }
+
+    public double getDisplacement() {
+        if (!touchedWall) {
+            double deltaX = x - x0;
+            double deltaY = y - y0;
+            return deltaX * deltaX + deltaY * deltaY;
+        } else {
+            return -1;
+        }
     }
 
     // update both particles to simulate them bouncing off each other.
