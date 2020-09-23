@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.PriorityQueue;
 
 public class MDSimulation {
@@ -50,6 +51,7 @@ public class MDSimulation {
         } catch (IOException e) {
             System.out.println("Unable to delete previously existing dynamic config");
         }
+
         save();
         int i = 0;
 
@@ -179,29 +181,29 @@ public class MDSimulation {
             long amountOfParticlesY = Math.round(universeHeight / wallParticlesDiameter);
             long amountOfParticlesOpening = Math.round(((universeHeight - openingSize) / wallParticlesDiameter)  / 2);
             long totalParticles = amountOfParticlesX * 2 + amountOfParticlesY * 2 + 2 * amountOfParticlesOpening + sampleSize;
-            pw.printf("%d\n\n", totalParticles);
+            pw.printf(Locale.US, "%d\n%f\n", totalParticles, systemTime);
             for (Particle p : particles) {
                 // TODO: Check if we add RGB here
                 double color = p.getId() / (double)sampleSize;
-                pw.printf(particleFormat, p.getId(), p.getX(), p.getY(), p.getVx(), p.getVy(), p.getMass(), p.getRadius(), color, 1 - color, 1 - color);
+                pw.printf(Locale.US, particleFormat, p.getId(), p.getX(), p.getY(), p.getVx(), p.getVy(), p.getMass(), p.getRadius(), color, 1 - color, 1 - color);
             }
 
             // Pared de abajo y arriba
             for (int i = 0; i < amountOfParticlesX; i++) {
-                pw.printf(particleFormat, -1, i * wallParticlesDiameter, 0D, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D);
-                pw.printf(particleFormat, -1, i * wallParticlesDiameter, universeHeight, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D);
+                pw.printf(Locale.US, particleFormat, -1, i * wallParticlesDiameter, 0D, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D);
+                pw.printf(Locale.US, particleFormat, -1, i * wallParticlesDiameter, universeHeight, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D);
             }
 
             // Paredes derecha izq
             for (int i = 0; i < amountOfParticlesY; i++) {
-                pw.printf(particleFormat, -1, 0D, i * wallParticlesDiameter, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D);
-                pw.printf(particleFormat, -1, universeWidth, i * wallParticlesDiameter, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D);
+                pw.printf(Locale.US, particleFormat, -1, 0D, i * wallParticlesDiameter, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D);
+                pw.printf(Locale.US, particleFormat, -1, universeWidth, i * wallParticlesDiameter, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D);
             }
 
             // Paredes abertura
             for (int i = 1; i <= amountOfParticlesOpening; i++) {
-                pw.printf(particleFormat, -1, universeWidth / 2, i * wallParticlesDiameter, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D);
-                pw.printf(particleFormat, -1, universeWidth / 2, universeHeight - i * wallParticlesDiameter, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D);
+                pw.printf(Locale.US, particleFormat, -1, universeWidth / 2, i * wallParticlesDiameter, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D);
+                pw.printf(Locale.US, particleFormat, -1, universeWidth / 2, universeHeight - i * wallParticlesDiameter, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D);
             }
 
 
@@ -216,9 +218,10 @@ public class MDSimulation {
         try (FileWriter fw = new FileWriter(Constants.STATISTICS_FILEPATH, true);) {
 
             String statisticsFormat = "%f,%f,%f,%d,%f,%f\n";
+
             PrintWriter pw = new PrintWriter(fw);
 
-            pw.printf(statisticsFormat,
+            pw.printf(Locale.US, statisticsFormat,
                     pressure,
                     configuration.getInitialVelocity(),
                     universeHeight * universeWidth,
