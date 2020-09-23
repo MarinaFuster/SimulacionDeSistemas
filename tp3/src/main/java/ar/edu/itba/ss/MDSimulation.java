@@ -213,7 +213,7 @@ public class MDSimulation {
             long amountOfParticlesY = Math.round(universeHeight / wallParticlesDiameter);
             long amountOfParticlesOpening = Math.round(((universeHeight - openingSize) / wallParticlesDiameter)  / 2);
             long totalParticles = amountOfParticlesX * 2 + amountOfParticlesY * 2 + 2 * amountOfParticlesOpening + sampleSize;
-            pw.printf(Locale.US, "%d\n%f\t%f\n", totalParticles, systemTime, fp);
+            pw.printf(Locale.US, "%d\n%f,%f\n", totalParticles, systemTime, fp);
             for (Particle p : particles) {
                 // TODO: Check if we add RGB here
                 double color = p.getId() / (double)sampleSize;
@@ -222,20 +222,20 @@ public class MDSimulation {
 
             // Pared de abajo y arriba
             for (int i = 0; i < amountOfParticlesX; i++) {
-                pw.printf(Locale.US, particleFormat, -1, i * wallParticlesDiameter, 0D, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D, -1);
-                pw.printf(Locale.US, particleFormat, -1, i * wallParticlesDiameter, universeHeight, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D, -1);
+                pw.printf(Locale.US, particleFormat, -1, i * wallParticlesDiameter, 0D, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D, -1D);
+                pw.printf(Locale.US, particleFormat, -1, i * wallParticlesDiameter, universeHeight, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D, -1D);
             }
 
             // Paredes derecha izq
             for (int i = 0; i < amountOfParticlesY; i++) {
-                pw.printf(Locale.US, particleFormat, -1, 0D, i * wallParticlesDiameter, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D, -1);
-                pw.printf(Locale.US, particleFormat, -1, universeWidth, i * wallParticlesDiameter, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D, -1);
+                pw.printf(Locale.US, particleFormat, -1, 0D, i * wallParticlesDiameter, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D, -1D);
+                pw.printf(Locale.US, particleFormat, -1, universeWidth, i * wallParticlesDiameter, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D, -1D);
             }
 
             // Paredes abertura
             for (int i = 1; i <= amountOfParticlesOpening; i++) {
-                pw.printf(Locale.US, particleFormat, -1, universeWidth / 2, i * wallParticlesDiameter, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D, -1);
-                pw.printf(Locale.US, particleFormat, -1, universeWidth / 2, universeHeight - i * wallParticlesDiameter, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D, -1);
+                pw.printf(Locale.US, particleFormat, -1, universeWidth / 2, i * wallParticlesDiameter, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D, -1D);
+                pw.printf(Locale.US, particleFormat, -1, universeWidth / 2, universeHeight - i * wallParticlesDiameter, 0D, 0D, 0D, Constants.WALLPARTICLESRADIUS, 1D, 1D, 1D, -1D);
             }
 
 

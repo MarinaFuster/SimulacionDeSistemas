@@ -16,7 +16,7 @@ public class Main {
         builder.name("test")
                 .outFolder("./output/")
                 .maxIterations(150)
-                .sampleSize(30);
+                .sampleSize(50);
 
         return builder.get();
     }
