@@ -33,7 +33,7 @@ def dataframe_fp(statistics):
 
         plt.xlabel("Apertura del tabique [m]")
         plt.ylabel("Tiempo de corte de la simulación (fp ~ 0.5) [s]")
-        plt.errorbar(list_tabique, means, stds, linestyle='None', marker='^')
+        plt.errorbar(list_tabique, means, stds, linestyle='None', solid_capstyle='projecting', capsize=5, marker='o')
         plt.savefig(filepath)
         plt.clf()
 
@@ -55,21 +55,27 @@ def dataframe_gas_law(statistics):
                 (statistics["n"] == n) & (statistics["tabique"] == t)]
         
         # gets temperatures and pressure from file
-        temperatures = np.array(filtered["temperatura"]) # x
-        pressures = np.array(filtered["presion"]) # y
+        temperatures = statistics.temperatura.unique()
+        means = []
+        stds = []
+
+        energies = calculate_energy(temperatures, n) # x
+
+        for temp in temperatures:
+            new_filtered = filtered.loc[filtered["temperatura"] == temp]
+            means.append(new_filtered.presion.mean()) # y 
+            stds.append(new_filtered.presion.std())
         
-        energies = calculate_energy(temperatures, n)
 
         # least square method for linear regression
-        slope,intercept = np.polyfit(energies, pressures, 1)
+        slope,intercept = np.polyfit(energies, means, 1)
 
         filepath = folder + "dataframe_gas_law_{}".format(n)
 
         # plots and saves figure
-        coef = "Coeficiente de regresión lineal: {:.4}".format(slope)
-        plt.xlabel("Energía del sistema [J]" + "\n\n" + coef)
-        plt.ylabel("Presión del sistema [N*s]")
-        plt.plot(energies, pressures, 'o')
+        plt.xlabel("Energía del sistema [J]")
+        plt.ylabel("Presión del sistema [N/m]")
+        plt.errorbar(energies, means, stds, linestyle='None', solid_capstyle='projecting', capsize=5, marker='o')
         plt.plot(energies, slope*energies + intercept)
         plt.savefig(filepath, bbox_inches="tight", pad_inches=0.3)
         plt.clf()
