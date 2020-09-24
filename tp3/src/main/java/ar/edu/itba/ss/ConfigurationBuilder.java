@@ -10,9 +10,10 @@ public class ConfigurationBuilder {
     private String name;
     private String outFolder;
     private double initialVelocity = Constants.INITIAL_VELOCITY;
+    private boolean measurePressure = false;
 
     public Configuration get() {
-        return  new Configuration(universeWidth, universeHeight, openingSize, sampleSize, maxIterations, name, outFolder, initialVelocity);
+        return  new Configuration(universeWidth, universeHeight, openingSize, sampleSize, maxIterations, name, outFolder, initialVelocity, measurePressure);
     }
 
     public ConfigurationBuilder maxIterations(int maxIterations) {
@@ -52,6 +53,11 @@ public class ConfigurationBuilder {
 
     public ConfigurationBuilder initialVelocity(double initialVelocity) {
         this.initialVelocity = initialVelocity;
+        return this;
+    }
+
+    public ConfigurationBuilder measurePressure(boolean measurePressure) {
+        this.measurePressure = measurePressure;
         return this;
     }
 }

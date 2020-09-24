@@ -110,6 +110,7 @@ public class Particle {
         collisionCount++;
         touchedWall = true;
         MDSimulation.impulse += 2 * mass * Math.abs(vy);
+        MDSimulation.bounceCount += 1;
     }
 
     public double getDisplacement() {

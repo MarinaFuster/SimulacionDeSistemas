@@ -17,8 +17,9 @@ public class Configuration {
     private final String name;
     private final String outFolder;
     private final  double initialVelocity;
+    private final boolean measurePressure;
 
-    public Configuration(double universeWidth, double universeHeight, double openingSize, int sampleSize, int maxIterations, String name, String outFolder, double initialVelocity) {
+    public Configuration(double universeWidth, double universeHeight, double openingSize, int sampleSize, int maxIterations, String name, String outFolder, double initialVelocity, boolean measurePressure) {
         this.universeWidth = universeWidth;
         this.universeHeight = universeHeight;
         this.openingSize = openingSize;
@@ -27,6 +28,7 @@ public class Configuration {
         this.name = name;
         this.outFolder = outFolder;
         this.initialVelocity =initialVelocity;
+        this.measurePressure = measurePressure;
     }
 
     public double getUniverseWidth() {
@@ -87,5 +89,9 @@ public class Configuration {
         } catch (IOException ex) {
             System.out.println("Unable to save static file");
         }
+    }
+
+    public boolean isMeasurePressure() {
+        return measurePressure;
     }
 }
