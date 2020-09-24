@@ -109,6 +109,7 @@ public class Particle {
         vy = -vy;
         collisionCount++;
         touchedWall = true;
+        MDSimulation.impulse += 2 * mass * Math.abs(vy);
     }
 
     public double getDisplacement() {
