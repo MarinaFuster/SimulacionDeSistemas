@@ -10,10 +10,7 @@ public class OscillatorParticle {
 
     // Previous values needed for beeman and predictor corrector
     // Beeman needs acceleration in t-deltaT
-    // TODO: Find initial value for previousAcceleration
     private double previousAcceleration;
-
-
 
 
     public OscillatorParticle(double x, double v, double mass) {
@@ -23,8 +20,22 @@ public class OscillatorParticle {
     }
 
 
-    public double getActingForces(double elasticConstant, double damping) {
+
+
+    private double getActingForces(double elasticConstant, double damping) {
+        return getActingForces(elasticConstant, damping, x, v);
+    }
+
+    private double getActingForces(double elasticConstant, double damping, double x, double v) {
         return -1 * x * elasticConstant - (damping * v);
+    }
+
+    public void initializePreviousAcceleration(double deltaT, double elasticConstant, double damping) {
+        double forces = getActingForces(elasticConstant, damping);
+        double prevX = x - v * deltaT + (1/2.0) * deltaT * deltaT * forces;
+        double prevV = v - forces * deltaT;
+        double prevF = getActingForces(elasticConstant, damping, prevX, prevV);
+        previousAcceleration = prevF / mass;
     }
 
     private void applyVerlet(double deltaT, double elasticConstant, double damping) {
@@ -33,16 +44,16 @@ public class OscillatorParticle {
         x = x + deltaT * v + deltaT * deltaT * forces / (2 * mass);
     }
 
+
     private void applyBeeman(double deltaT, double elasticConstant, double damping) {
         double forces = getActingForces(elasticConstant, damping);
         double a = forces / mass;
-        double vt = v;
         double deltaT2 = deltaT * deltaT;
         x = x + v * deltaT + (2/3.0) * a * deltaT2 - (1/6.0)  * previousAcceleration * deltaT2;
-        v = vt + (3/2.0) * a * deltaT - (1/2.0) * previousAcceleration * deltaT;
-        double newForces = getActingForces(elasticConstant, damping);
+        double predV = v + (3/2.0) * a * deltaT - (1/2.0) * previousAcceleration * deltaT;
+        double newForces = getActingForces(elasticConstant, damping, x, predV);
         double newA = newForces / mass;
-        v = vt + (1/3.0) * newA * deltaT + (5/6.0) * a * deltaT - (1/6.0) * previousAcceleration * deltaT;
+        v = v + (1/3.0) * newA * deltaT + (5/6.0) * a * deltaT - (1/6.0) * previousAcceleration * deltaT;
         previousAcceleration = a;
     }
 

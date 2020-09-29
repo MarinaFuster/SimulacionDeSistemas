@@ -27,12 +27,10 @@ public class OscillatorSimulation {
         }
 
         OscillatorParticle oscillatorParticle = new OscillatorParticle(configuration.getStartX(), configuration.getStartV(),configuration.getParticleMass());
+        oscillatorParticle.initializePreviousAcceleration(configuration.getDeltaT(), configuration.getSpringConstant(), configuration.getDamping());
         int iteration = 0;
         save(oscillatorParticle);
         while (time < configuration.getCutoffTime()) {
-
-
-
             oscillatorParticle.applyIntegrator(configuration.getIntegrator(),
                     configuration.getDeltaT(), configuration.getSpringConstant(), configuration.getDamping());
             time += configuration.getDeltaT();
