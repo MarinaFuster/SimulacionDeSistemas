@@ -52,6 +52,7 @@ public class OscillatorSimulation {
 
     public void save(OscillatorParticle particle) {
         try (FileWriter fw = new FileWriter(getOutputFileName(), true);) {
+            // x v radio
             String particleFormat = "%f\t%f\t0.01\n";
             PrintWriter pw = new PrintWriter(fw);
 
