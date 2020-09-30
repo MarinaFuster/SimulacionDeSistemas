@@ -2,7 +2,6 @@ package ar.edu.itba.ss.mars;
 
 import ar.edu.itba.ss.Integrator;
 import ar.edu.itba.ss.oscillator.OscillatorParticle;
-import com.sun.xml.internal.ws.wsdl.writer.document.Part;
 
 import java.io.FileWriter;
 import java.io.IOException;

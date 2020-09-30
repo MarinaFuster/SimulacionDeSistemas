@@ -12,8 +12,8 @@ import ar.edu.itba.ss.oscillator.OscillatorSimulation;
 public class App {
     public static void main( String[] args ) {
 
-//        runOscillator();
-        runPlanets();
+        runOscillator();
+//        runPlanets();
     }
 
     public static void runOscillator() {
@@ -21,8 +21,8 @@ public class App {
 
         builder.deltaT(0.001)
                 .saveFrequency(15)
-                .integrator(Integrator.BEEMAN)
-                .name("beeman");
+                .integrator(Integrator.GEARPC)
+                .name("gearpc");
 
 
         OscillatorSimulation simulation = new OscillatorSimulation(builder.get());
