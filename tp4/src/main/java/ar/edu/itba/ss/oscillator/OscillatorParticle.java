@@ -7,6 +7,8 @@ public class OscillatorParticle {
     private double x;
     private double v;
     private double mass;
+    private double currentTime;
+    private double A;
 
     // Previous values needed for beeman and predictor corrector
     // Beeman needs acceleration in t-deltaT
@@ -18,10 +20,9 @@ public class OscillatorParticle {
         this.x = x;
         this.v = v;
         this.mass = mass;
+        this.currentTime = 0;
+        this.A = x;
     }
-
-
-
 
     private double getActingForces(double elasticConstant, double damping) {
         return getActingForces(elasticConstant, damping, x, v);
@@ -117,6 +118,13 @@ public class OscillatorParticle {
         return matrix;
     }
 
+    private void applyAnalytic(double deltaT, double elasticConstant, double damping) {
+        double t = currentTime + deltaT;
+        x = A * Math.exp(-1 * damping / (2*mass) ) *
+                Math.cos(Math.pow(elasticConstant/mass - damping*damping/(4*mass*mass), 0.5)*t);
+        currentTime = t;
+    }
+
     public void applyIntegrator(Integrator integrator, double deltaT, double elasticConstant, double damping) {
         switch (integrator) {
             case VERLET:
@@ -128,12 +136,13 @@ public class OscillatorParticle {
             case GEARPC:
                 applyGearPC(deltaT, elasticConstant, damping);
                 break;
+            case ANALYTIC:
+                applyAnalytic(deltaT, elasticConstant, damping);
+                break;
             default:
                 throw new RuntimeException("Invalid Integrator");
         }
     }
-
-
 
     public double getX() {
         return x;
