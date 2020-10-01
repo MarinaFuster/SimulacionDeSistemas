@@ -120,7 +120,7 @@ public class OscillatorParticle {
 
     private void applyAnalytic(double deltaT, double elasticConstant, double damping) {
         double t = currentTime + deltaT;
-        x = A * Math.exp(-1 * damping / (2*mass) ) *
+        x = A * Math.exp(-1 * damping / (2*mass) * t) *
                 Math.cos(Math.pow(elasticConstant/mass - damping*damping/(4*mass*mass), 0.5)*t);
         currentTime = t;
     }

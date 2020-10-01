@@ -11,8 +11,8 @@ import ar.edu.itba.ss.oscillator.OscillatorSimulation;
  */
 public class App {
     public static void main( String[] args ) {
-//        runOscillatorForMetrics();
-        runOscillator();
+        runOscillatorForMetrics();
+//        runOscillator();
 //        runPlanets();
     }
 
@@ -31,8 +31,8 @@ public class App {
 
     public static void runOscillatorForMetrics() {
         for(Integrator i : Integrator.values())  {
-            double deltaT = 0.0001;
-            while(deltaT <= 0.001) {
+            double deltaT = 0.0001D;
+            while(deltaT <= 0.0011D) {
                 OscillatorConfigurationBuilder builder = new OscillatorConfigurationBuilder();
 
                 builder.deltaT(deltaT)
@@ -44,7 +44,7 @@ public class App {
                 OscillatorSimulation simulation = new OscillatorSimulation(builder.get());
 
                 simulation.run();
-                deltaT += 0.0001;
+                deltaT += 0.0001D;
             }
         }
     }
