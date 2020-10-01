@@ -12,8 +12,8 @@ import ar.edu.itba.ss.oscillator.OscillatorSimulation;
 public class App {
     public static void main( String[] args ) {
 
-        runOscillator();
-//        runPlanets();
+//        runOscillator();
+        runPlanets();
     }
 
     public static void runOscillator() {

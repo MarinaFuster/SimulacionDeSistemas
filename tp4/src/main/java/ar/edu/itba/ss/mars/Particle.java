@@ -22,7 +22,7 @@ public class Particle {
     // R G B
     private final double R,G,B;
 
-    private ParticleNames name;
+    private final ParticleNames name;
 
     public Particle(ParticleNames name, double x, double y, double vx, double vy, double mass, double radius, double visualizationRadius, double R, double G, double B) {
         this.position = new Vector2D(x,y);
@@ -30,7 +30,7 @@ public class Particle {
         this.mass = mass;
         this.radius = radius;
         this.visualizationRadius = visualizationRadius;
-
+        this.name = name;
         this.R = R;
         this.G = G;
         this.B = B;
@@ -39,32 +39,31 @@ public class Particle {
 
     // Returns 2d array of acting forces in x(0) and y(1)
     private Vector2D getActingForces(List<Particle> actingParticles) {
-        return getActingForces(actingParticles, this.position, this.speed);
+        return getActingForces(actingParticles, this.position);
     }
 
-        private Vector2D getActingForces(List<Particle> actingParticles, Vector2D position, Vector2D speed) {
+    private Vector2D getActingForces(List<Particle> actingParticles, Vector2D position) {
 
-            double totalForceX = 0;
-            double totalForceY = 0;
+        double totalForceX = 0;
+        double totalForceY = 0;
 
-            for (Particle p: actingParticles) {
-                double f = Constants.GRAVITATIONAL_CONSTANT * mass * p.mass / position.distanceSquare(p.position);
+        for (Particle p: actingParticles) {
+            double f = Constants.GRAVITATIONAL_CONSTANT * mass * p.mass / position.distanceSquare(p.position);
 
-                Vector2D e = p.position.sub(position).mul(1/position.distance(p.position));
-                Vector2D projectedForces = e.mul(f);
-                totalForceX += projectedForces.getX();
-                totalForceY += projectedForces.getY();
-            }
-
-            return new Vector2D(totalForceX, totalForceY);
+            Vector2D e = p.position.sub(position).mul(1/position.distance(p.position));
+            Vector2D projectedForces = e.mul(f);
+            totalForceX += projectedForces.getX();
+            totalForceY += projectedForces.getY();
         }
+
+        return new Vector2D(totalForceX, totalForceY);
+    }
 
 
     public void initializePreviousAcceleration(double deltaT, List<Particle> actingParticles) {
         Vector2D forces = getActingForces(actingParticles);
         Vector2D prevPosition = position.sub(speed.mul(deltaT)).add(forces.mul((1/2.0) * deltaT * deltaT));
-        Vector2D prevSpeed = speed.sub(forces.mul(deltaT));
-        previousAcceleration = getActingForces(actingParticles, prevPosition, prevSpeed).mul(1/mass);
+        previousAcceleration = getActingForces(actingParticles, prevPosition).mul(1/mass);
     }
 
     private void applyVerlet(double deltaT, List<Particle> actingParticles) {

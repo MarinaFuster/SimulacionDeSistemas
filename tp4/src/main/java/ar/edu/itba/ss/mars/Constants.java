@@ -2,12 +2,21 @@ package ar.edu.itba.ss.mars;
 
 public class Constants {
 
-    public static final double GRAVITATIONAL_CONSTANT = 6.67408 * Math.pow(10,-11);   // m^3 kg^-1 s^-1
+
+//    X      X-component of position vector (km)
+//    Y      Y-component of position vector (km)
+//    Z      Z-component of position vector (km)
+//    VX     X-component of velocity vector (km/sec)
+//    VY     Y-component of velocity vector (km/sec)
+//    VZ     Z-component of velocity vector (km/sec)
+
+    public static final double GRAVITATIONAL_CONSTANT = 6.693 * Math.pow(10,-11);   // m^3 kg^-1 s^-2
+
 
     public static class EarthConstants {
         public static final double MASS = 5.97219 * Math.pow(10,24);                // kg
 //        public static final double RADIUS = 6378.137;                               // km
-        public static final double RADIUS = 6378.137 * 1000;                               // m
+        public static final double RADIUS = 6378.137 * Math.pow(10,3);                               // m
         public static final double VISUALIZATION_RADIUS = RADIUS * 500;             // m
 
 //        public static final double STARTX = 1.493188929636662 * Math.pow(10,8);     // ?? (suponemos km)
@@ -24,7 +33,7 @@ public class Constants {
     public static class SunConstants {
         public static final double MASS = 1988500 * Math.pow(10,24);                 // Kg
 //        public static final double RADIUS = 696000;                                     // km
-        public static final double RADIUS = 696000 * 1000;                                     // m
+        public static final double RADIUS = 696000 * Math.pow(10,3);                                     // m
         public static final double VISUALIZATION_RADIUS = RADIUS * 20;                  //km
     }
 }
