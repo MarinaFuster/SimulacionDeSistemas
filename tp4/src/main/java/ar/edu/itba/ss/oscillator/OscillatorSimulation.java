@@ -56,7 +56,7 @@ public class OscillatorSimulation {
             String particleFormat = "%f\t%f\t0.01\n";
             PrintWriter pw = new PrintWriter(fw);
 
-            pw.printf(Locale.US, "2\n%f\n",configuration.getDeltaT()); // If we want to add extra data, they should go here between the \n
+            pw.printf(Locale.US, "%f\n%f\n",this.time, configuration.getDeltaT()); // If we want to add extra data, they should go here between the \n
             pw.printf(Locale.US, particleFormat, 0D, 0D);
             pw.printf(Locale.US, particleFormat, particle.getX(), particle.getV());
         } catch (IOException ex) {
