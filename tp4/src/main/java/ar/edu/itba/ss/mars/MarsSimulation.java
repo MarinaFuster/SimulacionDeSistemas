@@ -45,11 +45,24 @@ public class MarsSimulation {
                 Constants.EarthConstants.RADIUS,
                 Constants.EarthConstants.VISUALIZATION_RADIUS,
                 0,1,0);
+
+        Particle mars = new Particle(
+                ParticleNames.MARS,
+                Constants.MarsConstants.STARTX,
+                Constants.MarsConstants.STARTY,
+                Constants.MarsConstants.STARTVX,
+                Constants.MarsConstants.STARTVY,
+                Constants.MarsConstants.MASS,
+                Constants.MarsConstants.RADIUS,
+                Constants.MarsConstants.VISUALIZATION_RADIUS,
+                1,0,0);
+
         Particle sun = new Particle(ParticleNames.SUN, 0,0,0,0,
                 Constants.SunConstants.MASS, Constants.SunConstants.RADIUS, Constants.SunConstants.VISUALIZATION_RADIUS,1, 1, 0);
 
         particles.add(earth);
         particles.add(sun);
+        particles.add(mars);
 
         int iteration = 0;
         save(particles);
@@ -66,6 +79,9 @@ public class MarsSimulation {
                 save(particles);
             }
         }
+
+        save(particles);
+
     }
 
     private String getOutputFileName() {
