@@ -11,29 +11,46 @@ import ar.edu.itba.ss.oscillator.OscillatorSimulation;
  */
 public class App {
     public static void main( String[] args ) {
-
+        runOscillatorForMetrics();
 //        runOscillator();
-        runPlanets();
+//        runPlanets();
     }
 
     public static void runOscillator() {
-        OscillatorConfigurationBuilder builder = new OscillatorConfigurationBuilder();
+            OscillatorConfigurationBuilder builder = new OscillatorConfigurationBuilder();
 
-        builder.deltaT(0.001)
-                .saveFrequency(15)
-                .integrator(Integrator.GEARPC)
-                .name("gearpc");
+            builder.deltaT(0.001)
+                    .saveFrequency(15)
+                    .integrator(Integrator.BEEMAN)
+                    .name(Integrator.BEEMAN.getDescription());
 
 
-        OscillatorSimulation simulation = new OscillatorSimulation(builder.get());
+            OscillatorSimulation simulation = new OscillatorSimulation(builder.get());
+            simulation.run();
+    }
 
-        simulation.run();
+    public static void runOscillatorForMetrics() {
+        for(Integrator i : Integrator.values())  {
+            double deltaT = 0.0001D;
+            while(deltaT <= 0.0011D) {
+                OscillatorConfigurationBuilder builder = new OscillatorConfigurationBuilder();
 
+                builder.deltaT(deltaT)
+                        .saveFrequency(15)
+                        .integrator(i)
+                        .name(i.getDescription());
+
+
+                OscillatorSimulation simulation = new OscillatorSimulation(builder.get());
+
+                simulation.run();
+                deltaT += 0.0001D;
+            }
+        }
     }
 
     public static void runPlanets() {
         MarsConfigurationBuilder builder = new MarsConfigurationBuilder();
-
 
         double secondsInAYear = 3.154 * Math.pow(10,7);
         builder.deltaT(50).cutoffTime(secondsInAYear).name("orbit").saveFrequency(10000);

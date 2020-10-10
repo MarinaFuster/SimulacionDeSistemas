@@ -47,16 +47,16 @@ public class OscillatorSimulation {
         if (outFolder.charAt(outFolder.length() - 1) != '/') {
             outFolder = outFolder + "/";
         }
-        return String.format("%s%s_dynamic.xyz", outFolder, configuration.getName());
+        return String.format("%s%s_%.4f_dynamic.xyz", outFolder, configuration.getName(), configuration.getDeltaT());
     }
 
     public void save(OscillatorParticle particle) {
         try (FileWriter fw = new FileWriter(getOutputFileName(), true);) {
             // x v radio
-            String particleFormat = "%f\t%f\t0.01\n";
+            String particleFormat = "%.4f\t%.4f\t0.01\n";
             PrintWriter pw = new PrintWriter(fw);
 
-            pw.printf(Locale.US, "2\n\n"); // If we want to add extra data, they should go here between the \n
+            pw.printf(Locale.US, "2\n%.4f\n", time); // If we want to add extra data, they should go here between the \n
             pw.printf(Locale.US, particleFormat, 0D, 0D);
             pw.printf(Locale.US, particleFormat, particle.getX(), particle.getV());
         } catch (IOException ex) {
