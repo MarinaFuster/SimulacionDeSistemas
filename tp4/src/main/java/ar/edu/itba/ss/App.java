@@ -56,7 +56,7 @@ public class App {
 
         double secondsInAYear = 3.154 * Math.pow(10,7);
         double secondsInADay = 60*60*24;
-        builder.deltaT(50).cutoffTime(secondsInADay * 100).name("rocket").saveFrequency(1000);
+        builder.deltaT(50).cutoffTime(secondsInAYear * 3).name("rocket").saveFrequency(1000);
         System.out.println(secondsInAYear);
 //        builder.deltaT(50).cutoffTime(secondsInAYear).name("orbit").saveFrequency(31540);
         MarsSimulation simulation = new MarsSimulation(builder.get());

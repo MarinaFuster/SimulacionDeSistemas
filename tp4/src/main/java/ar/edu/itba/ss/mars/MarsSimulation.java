@@ -72,18 +72,19 @@ public class MarsSimulation {
 
         save(particles);
 
-//
-//        double secondsInDay = 60*60*24;
-//        double secondsInAYear = 3.154 * Math.pow(10,7);
-//        double rocketStart = secondsInAYear * 2 - secondsInDay * 80;
-//        double rocketEnd = secondsInAYear * 2 + secondsInDay * 100;
-//        double rocketFrequency = secondsInDay;
+        double secondsInDay = 60*60*24;
+        double secondsInAYear = 3.154 * Math.pow(10,7);
+        double rocketStart = 0;
+        double rocketEnd = secondsInAYear * 2 + secondsInDay * 100;
+        double rocketFrequency = secondsInDay;
 
-//            if (time >= rocketStart && time <= rocketEnd && time % rocketFrequency == 0) {
-//                particles.add(createRocket(sun, earth));
-//            }
             // Calculate R(t+1) and V(t+1)
         while(time <= configuration.getCutoffTime()) {
+
+            if (time >= rocketStart && time <= rocketEnd && time % rocketFrequency == 0) {
+                particles.add(createRocket(sun, earth));
+            }
+
             for (Particle p : particles) {
                 if(p.getParticleName() != ParticleNames.SUN) {
                     p.applyIntegrator(configuration.getIntegrator(), configuration.getDeltaT(), particles);
@@ -162,8 +163,8 @@ public class MarsSimulation {
         vxRocket = Math.signum(vxt) * Math.abs(vxRocket);
         vyRocket = Math.signum(vyt) * Math.abs(vyRocket);
 
-        System.out.println("New rocket");
-        System.out.printf("x: %f - y: %f - xt: %f - yt: %f\n", xRocket, yRocket, xt, yt);
+//        System.out.println("New rocket");
+//        System.out.printf("x: %f - y: %f - xt: %f - yt: %f\n", xRocket, yRocket, xt, yt);
 
         Particle rocket = new Particle(ParticleNames.ROCKET, xRocket, yRocket, vxRocket, vyRocket,
                 Constants.RocketConstants.rocketMass,

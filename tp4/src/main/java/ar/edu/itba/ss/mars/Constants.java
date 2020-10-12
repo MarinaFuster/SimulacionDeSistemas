@@ -28,7 +28,7 @@ public class Constants {
     public static class MarsConstants {
         public static final double MASS = 6.4171 * Math.pow(10,23);                // kg
         public static final double RADIUS = 3389.92 * Math.pow(10,3);              // m
-        public static final double VISUALIZATION_RADIUS = RADIUS * 500;             // m
+        public static final double VISUALIZATION_RADIUS = RADIUS * 700;             // m
 
         public static final double STARTX = 2.059448551842169 * Math.pow(10,11);    // m
         public static final double STARTY = 4.023977946528339 * Math.pow(10,10);    // m
