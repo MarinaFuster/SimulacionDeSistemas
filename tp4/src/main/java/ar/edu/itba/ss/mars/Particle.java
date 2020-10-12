@@ -10,6 +10,9 @@ public class Particle {
     private Vector2D position;
     private Vector2D speed;
 
+    private Vector2D newPosition;
+    private Vector2D newSpeed;
+
     private final double mass;
     private final double radius;
     private final double visualizationRadius;
@@ -68,12 +71,13 @@ public class Particle {
 
     private void applyVerlet(double deltaT, List<Particle> actingParticles) {
         Vector2D forces = getActingForces(actingParticles);
-        speed = speed.add(forces.mul(deltaT/mass));
-        position = position.add(speed.mul(deltaT)).add(forces.mul(deltaT*deltaT/(2*mass)));
+        newSpeed = speed.add(forces.mul(deltaT/mass));
+        newPosition = position.add(newSpeed.mul(deltaT)).add(forces.mul(deltaT*deltaT/(2*mass)));
     }
 
     public void applyIntegrator(Integrator integrator, double deltaT, List<Particle> actingParticles) {
-        actingParticles = actingParticles.stream().filter(p-> p.name != name).collect(Collectors.toList());
+        actingParticles = actingParticles.stream().filter(p-> p.name != name && p.name != ParticleNames.ROCKET)
+                .collect(Collectors.toList());
         switch (integrator) {
             case VERLET:
                 applyVerlet(deltaT, actingParticles);
@@ -87,6 +91,11 @@ public class Particle {
             default:
                 throw new RuntimeException("Invalid Integrator");
         }
+    }
+
+    public void applyChanges() {
+        this.position = newPosition;
+        this.speed = newSpeed;
     }
 
     public Vector2D getPosition() {

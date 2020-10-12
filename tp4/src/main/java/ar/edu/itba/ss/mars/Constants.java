@@ -16,7 +16,7 @@ public class Constants {
     public static class EarthConstants {
         public static final double MASS = 5.97219 * Math.pow(10,24);                // kg
         public static final double RADIUS = 6378.137 * Math.pow(10,3);              // m
-        public static final double VISUALIZATION_RADIUS = RADIUS * 500;             // m
+        public static final double VISUALIZATION_RADIUS = RADIUS * 400;             // m
 
         public static final double STARTX = 1.493188929636662 * Math.pow(10,11);    // m
         public static final double STARTY = 1.318936357931255 * Math.pow(10,10);    // m
@@ -44,6 +44,16 @@ public class Constants {
         public static final double MASS = 1988500 * Math.pow(10,24);                 // Kg
 //        public static final double RADIUS = 696000;                                     // km
         public static final double RADIUS = 696000 * Math.pow(10,3);                                     // m
-        public static final double VISUALIZATION_RADIUS = RADIUS * 20;                  //km
+        public static final double VISUALIZATION_RADIUS = RADIUS * 10;                  //km
+    }
+
+    public static class RocketConstants {
+        public static final double rocketVelocity = 8 * Math.pow(10,3); // m/s
+        public static final double spaceStationDistance = 1500 * Math.pow(10,3); // m
+        public static final double spaceStationVelocity = 7.12 *  Math.pow(10,3); // m/s
+        public static final double rocketMass = 5 * Math.pow(10,5); // kg
+        public static final double RADIUS = 1;                                     // m
+        public static final double VISUALIZATION_RADIUS = EarthConstants.VISUALIZATION_RADIUS * 0.7; //km
+
     }
 }

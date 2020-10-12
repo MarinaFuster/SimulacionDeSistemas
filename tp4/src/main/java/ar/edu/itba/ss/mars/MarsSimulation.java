@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -33,8 +34,7 @@ public class MarsSimulation {
 
         // Initialize Particles
         // First doing this for just sun and earth
-        List<Particle> particles = new ArrayList<>(2);
-
+        List<Particle> particles = new LinkedList<>();
         Particle earth = new Particle(
                 ParticleNames.EARTH,
                 Constants.EarthConstants.STARTX,
@@ -65,10 +65,31 @@ public class MarsSimulation {
         particles.add(mars);
 
         int iteration = 0;
+
+
+        particles.add(createRocket(sun, earth));
+
         save(particles);
+
+//
+//        double secondsInDay = 60*60*24;
+//        double secondsInAYear = 3.154 * Math.pow(10,7);
+//        double rocketStart = secondsInAYear * 2 - secondsInDay * 80;
+//        double rocketEnd = secondsInAYear * 2 + secondsInDay * 100;
+//        double rocketFrequency = secondsInDay;
         while(time < configuration.getCutoffTime()) {
+
+//            if (time >= rocketStart && time <= rocketEnd && time % rocketFrequency == 0) {
+//                particles.add(createRocket(sun, earth));
+//            }
+            // Calculate R(t+1) and V(t+1)
             for (Particle p : particles) {
                 p.applyIntegrator(configuration.getIntegrator(), configuration.getDeltaT(), particles);
+            }
+
+            // Apply the previously  calculated speeds and positions
+            for (Particle p : particles) {
+                p.applyChanges();
             }
 
 
@@ -118,5 +139,48 @@ public class MarsSimulation {
         } catch (IOException ex) {
             System.out.println("Unable to save, reason: " + ex.getMessage());
         }
+    }
+
+    public Particle createRocket(Particle sun, Particle earth) {
+        double xt = earth.getPosition().getX();
+        double yt = earth.getPosition().getY();
+        double alpha = Math.atan(yt / xt); // radians
+        double beta = (Math.PI / 2) - alpha;
+
+        double totalDistance = Constants.RocketConstants.spaceStationDistance
+                + Constants.EarthConstants.RADIUS
+                + Math.sqrt(xt*xt+yt*yt);
+
+        double xRocket = totalDistance * Math.cos(alpha);
+        double yRocket = totalDistance * Math.sin(alpha);
+
+        double vxt = earth.getSpeed().getX();
+        double vyt = earth.getSpeed().getY();
+
+        double earthV = Math.sqrt(vxt*vxt + vyt*vyt);
+        double totalVelocity = earthV + Constants.RocketConstants.rocketVelocity
+                + Constants.RocketConstants.spaceStationVelocity;
+
+        double vxRocket = totalVelocity * Math.cos(beta);
+        double vyRocket = totalVelocity * Math.sin(beta);
+//        System.out.println("Before");
+//        System.out.printf("x: %f - y: %f - vx: %f - vy: %f\n", xRocket, yRocket, vxRocket, vyRocket);
+        xRocket = Math.signum(xt) * Math.abs(xRocket);
+        yRocket = Math.signum(yt) * Math.abs(yRocket);
+        vxRocket = Math.signum(vxt) * Math.abs(vxRocket);
+        vyRocket = Math.signum(vyt) * Math.abs(vyRocket);
+
+        System.out.println("New rocket");
+        System.out.printf("x: %f - y: %f - xt: %f - yt: %f\n", xRocket, yRocket, xt, yt);
+
+        Particle rocket = new Particle(ParticleNames.ROCKET, xRocket, yRocket, vxRocket, vyRocket,
+                Constants.RocketConstants.rocketMass,
+                Constants.RocketConstants.RADIUS,
+                Constants.RocketConstants.VISUALIZATION_RADIUS,
+                0,0,0.5
+                );
+        return rocket;
+
+
     }
 }
