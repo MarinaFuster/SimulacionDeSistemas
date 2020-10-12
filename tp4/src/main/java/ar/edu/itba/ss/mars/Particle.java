@@ -89,6 +89,10 @@ public class Particle {
         }
     }
 
+    public ParticleNames getParticleName() {
+        return name;
+    }
+
     public Vector2D getPosition() {
         return position;
     }
