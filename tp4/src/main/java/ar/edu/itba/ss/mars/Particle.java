@@ -98,6 +98,10 @@ public class Particle {
         this.speed = newSpeed;
     }
 
+    public ParticleNames getParticleName() {
+        return name;
+    }
+
     public Vector2D getPosition() {
         return position;
     }

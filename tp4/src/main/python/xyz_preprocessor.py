@@ -28,14 +28,20 @@ def algorithms_information():
 def get_algorithm_information(file_prefix):
     pos_arr = []
     times_arr = []
-    filenames = np.sort(glob(f"{train_folder}/{file_prefix}*"))
+    filenames = np.sort(glob(f"{train_folder}/{file_prefix}*"))[::-1]
     for f in filenames:
         positions, times = get_positions_and_times(f)
-        pos_arr.append(positions)
-        times_arr.append(times)
+        
+        float_positions = list(map(float, positions))
+        float_times = list(map(float, times))
+        
+        pos_arr.append(np.array(float_positions))
+        times_arr.append(np.array(float_times))
+
     return np.array(pos_arr), np.array(times_arr)
 
 def get_positions_and_times(dynamic_input_path):
+    print(f"Analizing {dynamic_input_path}...")
     positions = []
     times = []
     state = DynamicInputState.START
@@ -46,7 +52,7 @@ def get_positions_and_times(dynamic_input_path):
                 remaining = int(line)
                 state = DynamicInputState.COMMENT
             elif state == DynamicInputState.COMMENT:
-                times.append(float(line))
+                times.append(line)
                 if remaining == 0:
                     state = DynamicInputState.START
                 else:
@@ -54,7 +60,7 @@ def get_positions_and_times(dynamic_input_path):
             elif state == DynamicInputState.PARTICLE:
                 if remaining == 1:
                     elements = line.split("\t")
-                    positions.append(float(elements[0]))
+                    positions.append(elements[0])
                 remaining -= 1
                 if remaining == 0:
                     state = DynamicInputState.START

@@ -1,8 +1,5 @@
 package ar.edu.itba.ss.mars;
 
-import ar.edu.itba.ss.Integrator;
-import ar.edu.itba.ss.oscillator.OscillatorParticle;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -57,12 +54,16 @@ public class MarsSimulation {
                 Constants.MarsConstants.VISUALIZATION_RADIUS,
                 1,0,0);
 
-        Particle sun = new Particle(ParticleNames.SUN, 0,0,0,0,
-                Constants.SunConstants.MASS, Constants.SunConstants.RADIUS, Constants.SunConstants.VISUALIZATION_RADIUS,1, 1, 0);
+        Particle sun = new Particle(ParticleNames.SUN,
+                0,0,0,0,
+                Constants.SunConstants.MASS,
+                Constants.SunConstants.RADIUS,
+                Constants.SunConstants.VISUALIZATION_RADIUS,
+                1, 1, 0);
 
         particles.add(earth);
-        particles.add(sun);
         particles.add(mars);
+        particles.add(sun);
 
         int iteration = 0;
 
@@ -77,21 +78,22 @@ public class MarsSimulation {
 //        double rocketStart = secondsInAYear * 2 - secondsInDay * 80;
 //        double rocketEnd = secondsInAYear * 2 + secondsInDay * 100;
 //        double rocketFrequency = secondsInDay;
-        while(time < configuration.getCutoffTime()) {
 
 //            if (time >= rocketStart && time <= rocketEnd && time % rocketFrequency == 0) {
 //                particles.add(createRocket(sun, earth));
 //            }
             // Calculate R(t+1) and V(t+1)
+        while(time <= configuration.getCutoffTime()) {
             for (Particle p : particles) {
-                p.applyIntegrator(configuration.getIntegrator(), configuration.getDeltaT(), particles);
+                if(p.getParticleName() != ParticleNames.SUN) {
+                    p.applyIntegrator(configuration.getIntegrator(), configuration.getDeltaT(), particles);
+                }
             }
 
             // Apply the previously  calculated speeds and positions
             for (Particle p : particles) {
                 p.applyChanges();
             }
-
 
             time += configuration.getDeltaT();
             iteration++;
@@ -102,7 +104,6 @@ public class MarsSimulation {
         }
 
         save(particles);
-
     }
 
     private String getOutputFileName() {
@@ -113,27 +114,18 @@ public class MarsSimulation {
         return String.format("%s%s_dynamic.xyz", outFolder, configuration.getName());
     }
 
-
     public void save(List<Particle> particles) {
         try (FileWriter fw = new FileWriter(getOutputFileName(), true);) {
 
             // Format: x y VX VY radio R G B
-            String particleFormat = "%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n";
+            String particleFormat = "%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n"; // TODO: check changing this to str builder
             PrintWriter pw = new PrintWriter(fw);
 
             // If we want to add extra data, they should go here between the \n as to not affect the ovito output
-            pw.printf(Locale.US, "%d\n\n", particles.size());
+            pw.printf(Locale.US, "%d\n%f\n", particles.size(), time);
 
             for (Particle p : particles) {
-                pw.printf(Locale.US, particleFormat,
-                        p.getPosition().getX(),
-                        p.getPosition().getY(),
-                        p.getSpeed().getX(),
-                        p.getSpeed().getY(),
-                        p.getVisualizationRadius(),
-                        p.getR(),
-                        p.getG(),
-                        p.getB());
+                pw.printf(Locale.US, particleStr(p).toString());
             }
 
         } catch (IOException ex) {
@@ -149,7 +141,7 @@ public class MarsSimulation {
 
         double totalDistance = Constants.RocketConstants.spaceStationDistance
                 + Constants.EarthConstants.RADIUS
-                + Math.sqrt(xt*xt+yt*yt);
+                + Math.sqrt(xt * xt + yt * yt);
 
         double xRocket = totalDistance * Math.cos(alpha);
         double yRocket = totalDistance * Math.sin(alpha);
@@ -157,7 +149,7 @@ public class MarsSimulation {
         double vxt = earth.getSpeed().getX();
         double vyt = earth.getSpeed().getY();
 
-        double earthV = Math.sqrt(vxt*vxt + vyt*vyt);
+        double earthV = Math.sqrt(vxt * vxt + vyt * vyt);
         double totalVelocity = earthV + Constants.RocketConstants.rocketVelocity
                 + Constants.RocketConstants.spaceStationVelocity;
 
@@ -177,10 +169,30 @@ public class MarsSimulation {
                 Constants.RocketConstants.rocketMass,
                 Constants.RocketConstants.RADIUS,
                 Constants.RocketConstants.VISUALIZATION_RADIUS,
-                0,0,0.5
-                );
+                0, 0, 0.5
+        );
         return rocket;
 
+    }
 
+    private StringBuilder particleStr(Particle p) {
+        StringBuilder str = new StringBuilder();
+        str.append(p.getPosition().getX());
+        str.append("\t");
+        str.append(p.getPosition().getY());
+        str.append("\t");
+        str.append(p.getSpeed().getX());
+        str.append("\t");
+        str.append(p.getSpeed().getY());
+        str.append("\t");
+        str.append(p.getVisualizationRadius());
+        str.append("\t");
+        str.append(p.getR());
+        str.append("\t");
+        str.append(p.getG());
+        str.append("\t");
+        str.append(p.getB());
+        str.append("\n");
+        return str;
     }
 }

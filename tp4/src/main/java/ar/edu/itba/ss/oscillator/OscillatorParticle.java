@@ -9,6 +9,7 @@ public class OscillatorParticle {
     private double mass;
     private double currentTime;
     private double A;
+    // int counter=0;
 
     // Previous values needed for beeman and predictor corrector
     // Beeman needs acceleration in t-deltaT
@@ -51,11 +52,11 @@ public class OscillatorParticle {
         double forces = getActingForces(elasticConstant, damping);
         double a = forces / mass;
         double deltaT2 = deltaT * deltaT;
-        x = x + v * deltaT + (2/3.0) * a * deltaT2 - (1/6.0)  * previousAcceleration * deltaT2;
-        double predV = v + (3/2.0) * a * deltaT - (1/2.0) * previousAcceleration * deltaT;
+        x = x + v * deltaT + (2.0/3.0) * a * deltaT2 - (1.0/6.0)  * previousAcceleration * deltaT2;
+        double predV = v + (3.0/2.0) * a * deltaT - (1.0/2.0) * previousAcceleration * deltaT;
         double newForces = getActingForces(elasticConstant, damping, x, predV);
         double newA = newForces / mass;
-        v = v + (1/3.0) * newA * deltaT + (5/6.0) * a * deltaT - (1/6.0) * previousAcceleration * deltaT;
+        v = v + (1.0/3.0) * newA * deltaT + (5.0/6.0) * a * deltaT - (1.0/6.0) * previousAcceleration * deltaT;
         previousAcceleration = a;
     }
 
@@ -79,22 +80,29 @@ public class OscillatorParticle {
 
         double r2tdeltaT = getActingForces(elasticConstant, damping, RPredictedVector[0], RPredictedVector[1])/mass;
         double r2ptdeltaT = RPredictedVector[2];
-        double deltaA =r2tdeltaT - r2ptdeltaT; // TODO: check if this should be abs
+        double deltaA = r2tdeltaT - r2ptdeltaT;
 
         // correction
-        double deltaR2 = deltaA * deltaT * deltaT / 2;
+        double deltaR2 = deltaA * (deltaT * deltaT) / 2;
 
         // alphas to correct predicted values
-        double c[] = {3/16.0, 251/360.0, 1, 11/18.0, 1/6.0, 1/60.0};
+        double c[] = {3.0/16.0, 251.0/360.0, 1.0, 11.0/18.0, 1.0/6.0, 1.0/60.0};
 
         // updates x and v
-        x = RPredictedVector[0] + c[0]*deltaR2 * 0 / Math.pow(deltaT, 0);
-        v = RPredictedVector[1] + c[1]*deltaR2 * 1 / Math.pow(deltaT, 1);
+        x = RPredictedVector[0] + c[0]*deltaR2 * fact(0) / Math.pow(deltaT, 0);
+        v = RPredictedVector[1] + c[1]*deltaR2 * fact(1) / Math.pow(deltaT, 1);
 
         // apply corrections and save them
         for(int i=0; i<6; i++) {
-            previousRVector[i] = RPredictedVector[i] + c[i]*deltaR2 * i / Math.pow(deltaT, i);
+            previousRVector[i] = RPredictedVector[i] + c[i]*deltaR2 * fact(i) / Math.pow(deltaT, i);
         }
+    }
+
+    private int fact(int n){
+        if(n == 0) {
+            return 1;
+        }
+        return n * fact(n-1);
     }
 
     private void initializeRVector(double elasticConstant, double damping) {
@@ -120,12 +128,17 @@ public class OscillatorParticle {
 
     private void applyAnalytic(double deltaT, double elasticConstant, double damping) {
         double t = currentTime + deltaT;
-        x = A * Math.exp(-1 * damping / (2*mass) * t) *
-                Math.cos(Math.pow(elasticConstant/mass - damping*damping/(4*mass*mass), 0.5)*t);
+        double exponential = Math.exp(-(damping / (2*mass)) * t);
+        double cosine = Math.cos(Math.pow(((elasticConstant/mass) - (damping*damping)/(4*(mass*mass))), 0.5) * t);
+        x = exponential * cosine;
         currentTime = t;
     }
 
     public void applyIntegrator(Integrator integrator, double deltaT, double elasticConstant, double damping) {
+        /* if(counter < 10) {
+            System.out.println(x);
+            counter++;
+        } */
         switch (integrator) {
             case VERLET:
                 applyVerlet(deltaT, elasticConstant, damping);
