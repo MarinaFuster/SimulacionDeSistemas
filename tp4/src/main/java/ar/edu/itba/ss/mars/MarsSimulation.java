@@ -158,15 +158,17 @@ public class MarsSimulation {
 
         double vxRocket = totalVelocity * Math.cos(beta);
         double vyRocket = totalVelocity * Math.sin(beta);
-
-        vxRocket += vxt;
-        vyRocket += vyt;
-//        System.out.println("Before");
-//        System.out.printf("x: %f - y: %f - vx: %f - vy: %f\n", xRocket, yRocket, vxRocket, vyRocket);
         xRocket = Math.signum(xt) * Math.abs(xRocket);
         yRocket = Math.signum(yt) * Math.abs(yRocket);
         vxRocket = Math.signum(vxt) * Math.abs(vxRocket);
         vyRocket = Math.signum(vyt) * Math.abs(vyRocket);
+
+        
+        vxRocket += vxt;
+        vyRocket += vyt;
+//        System.out.println("Before");
+//        System.out.printf("x: %f - y: %f - vx: %f - vy: %f\n", xRocket, yRocket, vxRocket, vyRocket);
+
 
 //        System.out.println("New rocket");
 //        System.out.printf("x: %f - y: %f - vx: %f - vy: %f\n", xRocket, yRocket, vxRocket, vyRocket);
