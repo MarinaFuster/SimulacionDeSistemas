@@ -12,7 +12,8 @@ public class OscillatorConfigurationBuilder {
 
     private double particleMass = 70;
     private double startX = 1;
-    private double startV = 0; // TODO: Check this value
+    private double A = 1;
+    private double startV = -A*damping/(2*particleMass);
     private double cutoffTime = 5;
     private double deltaT = 0.0001;
     private int saveFrequency = 5;

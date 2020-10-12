@@ -31,12 +31,14 @@ public class App {
 
     public static void runOscillatorForMetrics() {
         for(Integrator i : Integrator.values())  {
-            double deltaT = 0.0001D;
-            while(deltaT <= 0.0011D) {
+            System.out.println("Starting with " + i.getDescription() + "...");
+            int exp = 2;
+            while(exp <= 8) {
+                System.out.println("Starting with delta exp " + exp + "...");
                 OscillatorConfigurationBuilder builder = new OscillatorConfigurationBuilder();
 
-                builder.deltaT(deltaT)
-                        .saveFrequency(15)
+                builder.deltaT(Math.pow(10, -1*exp))
+                        .saveFrequency(50)
                         .integrator(i)
                         .name(i.getDescription());
 
@@ -44,7 +46,8 @@ public class App {
                 OscillatorSimulation simulation = new OscillatorSimulation(builder.get());
 
                 simulation.run();
-                deltaT += 0.0001D;
+                System.out.println("Finished simulation with " + i.getDescription() + " and exp = " + exp + ".");
+                exp += 1;
             }
         }
     }
