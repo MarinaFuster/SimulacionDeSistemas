@@ -11,9 +11,9 @@ import ar.edu.itba.ss.oscillator.OscillatorSimulation;
  */
 public class App {
     public static void main( String[] args ) {
-        runOscillatorForMetrics();
-//        runOscillator();
-//        runPlanets();
+//        runOscillatorForMetrics();
+        runOscillator();
+        runPlanets();
     }
 
     public static void runOscillator() {
@@ -53,7 +53,8 @@ public class App {
         MarsConfigurationBuilder builder = new MarsConfigurationBuilder();
 
         double secondsInAYear = 3.154 * Math.pow(10,7);
-        builder.deltaT(50).cutoffTime(secondsInAYear).name("orbit").saveFrequency(10000);
+        double secondsInADay = 60*60*24;
+        builder.deltaT(50).cutoffTime(secondsInADay * 100).name("rocket").saveFrequency(1000);
 
         MarsSimulation simulation = new MarsSimulation(builder.get());
 
