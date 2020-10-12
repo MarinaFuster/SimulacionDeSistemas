@@ -73,17 +73,21 @@ public class MarsSimulation {
         save(particles);
 
 //
-//        double secondsInDay = 60*60*24;
-//        double secondsInAYear = 3.154 * Math.pow(10,7);
-//        double rocketStart = secondsInAYear * 2 - secondsInDay * 80;
-//        double rocketEnd = secondsInAYear * 2 + secondsInDay * 100;
-//        double rocketFrequency = secondsInDay;
+        double secondsInDay = 60*60*24;
+        double secondsInAYear = 3.154 * Math.pow(10,7);
+        double rocketStart = secondsInAYear * 2 - secondsInDay * 80;
+        double rocketEnd = secondsInAYear * 2 + secondsInDay * 100;
+        double rocketFrequency = secondsInDay;
 
-//            if (time >= rocketStart && time <= rocketEnd && time % rocketFrequency == 0) {
-//                particles.add(createRocket(sun, earth));
-//            }
+
             // Calculate R(t+1) and V(t+1)
         while(time <= configuration.getCutoffTime()) {
+
+            if (time >= rocketStart && time <= rocketEnd && time % rocketFrequency == 0) {
+                particles.add(createRocket(sun, earth));
+            }
+
+
             for (Particle p : particles) {
                 if(p.getParticleName() != ParticleNames.SUN) {
                     p.applyIntegrator(configuration.getIntegrator(), configuration.getDeltaT(), particles);
@@ -136,7 +140,7 @@ public class MarsSimulation {
     public Particle createRocket(Particle sun, Particle earth) {
         double xt = earth.getPosition().getX();
         double yt = earth.getPosition().getY();
-        double alpha = Math.atan(yt / xt); // radians
+        double alpha = Math.atan2(yt, xt); // radians
         double beta = (Math.PI / 2) - alpha;
 
         double totalDistance = Constants.RocketConstants.spaceStationDistance
@@ -150,11 +154,14 @@ public class MarsSimulation {
         double vyt = earth.getSpeed().getY();
 
         double earthV = Math.sqrt(vxt * vxt + vyt * vyt);
-        double totalVelocity = earthV + Constants.RocketConstants.rocketVelocity
+        double totalVelocity = Constants.RocketConstants.rocketVelocity
                 + Constants.RocketConstants.spaceStationVelocity;
 
         double vxRocket = totalVelocity * Math.cos(beta);
         double vyRocket = totalVelocity * Math.sin(beta);
+
+        vxRocket += vxt;
+        vyRocket += vyt;
 //        System.out.println("Before");
 //        System.out.printf("x: %f - y: %f - vx: %f - vy: %f\n", xRocket, yRocket, vxRocket, vyRocket);
         xRocket = Math.signum(xt) * Math.abs(xRocket);
@@ -162,8 +169,11 @@ public class MarsSimulation {
         vxRocket = Math.signum(vxt) * Math.abs(vxRocket);
         vyRocket = Math.signum(vyt) * Math.abs(vyRocket);
 
-        System.out.println("New rocket");
-        System.out.printf("x: %f - y: %f - xt: %f - yt: %f\n", xRocket, yRocket, xt, yt);
+//        System.out.println("New rocket");
+//        System.out.printf("x: %f - y: %f - vx: %f - vy: %f\n", xRocket, yRocket, vxRocket, vyRocket);
+//
+//        System.out.println("Tierra");
+//        System.out.printf("x: %f - y: %f - vx: %f - vy: %f\n", xt, yt, vxt, vyt);
 
         Particle rocket = new Particle(ParticleNames.ROCKET, xRocket, yRocket, vxRocket, vyRocket,
                 Constants.RocketConstants.rocketMass,

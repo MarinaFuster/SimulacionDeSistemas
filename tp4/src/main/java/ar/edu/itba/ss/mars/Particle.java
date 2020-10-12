@@ -30,6 +30,9 @@ public class Particle {
     public Particle(ParticleNames name, double x, double y, double vx, double vy, double mass, double radius, double visualizationRadius, double R, double G, double B) {
         this.position = new Vector2D(x,y);
         this.speed = new Vector2D(vx, vy);
+        this.newPosition = new Vector2D(x,y);
+        this.newSpeed = new Vector2D(vx, vy);
+
         this.mass = mass;
         this.radius = radius;
         this.visualizationRadius = visualizationRadius;
