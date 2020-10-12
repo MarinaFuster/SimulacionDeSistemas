@@ -15,19 +15,29 @@ public class Constants {
 
     public static class EarthConstants {
         public static final double MASS = 5.97219 * Math.pow(10,24);                // kg
-//        public static final double RADIUS = 6378.137;                               // km
-        public static final double RADIUS = 6378.137 * Math.pow(10,3);                               // m
+        public static final double RADIUS = 6378.137 * Math.pow(10,3);              // m
         public static final double VISUALIZATION_RADIUS = RADIUS * 500;             // m
 
-//        public static final double STARTX = 1.493188929636662 * Math.pow(10,8);     // ?? (suponemos km)
-        public static final double STARTX = 1.493188929636662 * Math.pow(10,11);     // ?? (suponemos m)
-//        public static final double STARTY = 1.318936357931255 * Math.pow(10,7);     // ?? (suponemos km/s)
-        public static final double STARTY = 1.318936357931255 * Math.pow(10,10);     // ?? (suponemos km)
+        public static final double STARTX = 1.493188929636662 * Math.pow(10,11);    // m
+        public static final double STARTY = 1.318936357931255 * Math.pow(10,10);    // m
 
-//        public static final double STARTVX = -3.113279917782445 * Math.pow(10,0);   // ?? (suponemos km/s)
-//        public static final double STARTVY = 2.955205189256462 * Math.pow(10,1);    // ?? (suponemos km/s)
-        public static final double STARTVX = -3.113279917782445 * Math.pow(10,3);   // ?? (suponemos m/s)
-        public static final double STARTVY = 2.955205189256462 * Math.pow(10,4);    // ?? (suponemos m/s)
+        public static final double STARTVX = -3.113279917782445 * Math.pow(10,3);   // m/s
+        public static final double STARTVY = 2.955205189256462 * Math.pow(10,4);    // m/s
+    }
+
+
+
+
+    public static class MarsConstants {
+        public static final double MASS = 6.4171 * Math.pow(10,23);                // kg
+        public static final double RADIUS = 3389.92 * Math.pow(10,3);              // m
+        public static final double VISUALIZATION_RADIUS = RADIUS * 500;             // m
+
+        public static final double STARTX = 2.059448551842169 * Math.pow(10,11);    // m
+        public static final double STARTY = 4.023977946528339 * Math.pow(10,10);    // m
+
+        public static final double STARTVX = -3.717406842095575 * Math.pow(10,3);   // m/s
+        public static final double STARTVY = 2.584914078301731 * Math.pow(10,4);    // m/s
     }
 
     public static class SunConstants {
