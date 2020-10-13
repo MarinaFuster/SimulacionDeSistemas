@@ -5,15 +5,16 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class MarsSimulation {
 
     private final MarsConfiguration configuration;
-    private double time = 0;
+    public static double time = 0;
+    public static Particle mars, earth, sun;
 
 
     public MarsSimulation(MarsConfiguration configuration) {
@@ -32,7 +33,7 @@ public class MarsSimulation {
         // Initialize Particles
         // First doing this for just sun and earth
         List<Particle> particles = new LinkedList<>();
-        Particle earth = new Particle(
+        earth = new Particle(
                 ParticleNames.EARTH,
                 Constants.EarthConstants.STARTX,
                 Constants.EarthConstants.STARTY,
@@ -43,7 +44,7 @@ public class MarsSimulation {
                 Constants.EarthConstants.VISUALIZATION_RADIUS,
                 0,1,0);
 
-        Particle mars = new Particle(
+        mars = new Particle(
                 ParticleNames.MARS,
                 Constants.MarsConstants.STARTX,
                 Constants.MarsConstants.STARTY,
@@ -54,7 +55,7 @@ public class MarsSimulation {
                 Constants.MarsConstants.VISUALIZATION_RADIUS,
                 1,0,0);
 
-        Particle sun = new Particle(ParticleNames.SUN,
+        sun = new Particle(ParticleNames.SUN,
                 0,0,0,0,
                 Constants.SunConstants.MASS,
                 Constants.SunConstants.RADIUS,
@@ -68,23 +69,29 @@ public class MarsSimulation {
         int iteration = 0;
 
 
-        particles.add(createRocket(sun, earth));
+//        particles.add(createRocket(sun, earth));
 
-        save(particles);
-
-//
+//        save(particles);
+        double secondsInHour = 60*60;
         double secondsInDay = 60*60*24;
         double secondsInAYear = 3.154 * Math.pow(10,7);
-        double rocketStart = secondsInAYear * 2 - secondsInDay * 80;
-        double rocketEnd = secondsInAYear * 2 + secondsInDay * 100;
-        double rocketFrequency = secondsInDay;
 
+        // Estos datos son para deltaT = 50 para el segundo grafico de dincaia vs tiempo de lanzamiento
+//        double rocketStart = secondsInAYear * 2 - secondsInDay * 21;
+//        double rocketEnd = secondsInAYear * 2 - secondsInDay * 19;
+//        double rocketFrequency = 1;
 
-            // Calculate R(t+1) and V(t+1)
+        // Estos datos son para mandar un cohete por dia durante toda la simulacion
+        // (runtime ~
+        double rocketStart = 0;
+        double rocketEnd = Double.MAX_VALUE;
+        double rocketFrequency = secondsInDay / 50;
+
+        // Calculate R(t+1) and V(t+1)
         while(time <= configuration.getCutoffTime()) {
 
-            if (time >= rocketStart && time <= rocketEnd && time % rocketFrequency == 0) {
-                particles.add(createRocket(sun, earth));
+            if (time >= rocketStart && time <= rocketEnd && iteration % rocketFrequency == 0) {
+                particles.add(createRocket(earth));
             }
 
 
@@ -102,12 +109,16 @@ public class MarsSimulation {
             time += configuration.getDeltaT();
             iteration++;
 
-            if (iteration % configuration.getSaveFrequency() == 0) {
+            if (time >= rocketStart && iteration % configuration.getSaveFrequency() == 0) {
                 save(particles);
             }
         }
 
+
+
+
         save(particles);
+        saveRocketsData(particles);
     }
 
     private String getOutputFileName() {
@@ -118,11 +129,18 @@ public class MarsSimulation {
         return String.format("%s%s_dynamic.xyz", outFolder, configuration.getName());
     }
 
+    private String getRocketOutputFileName() {
+        String outFolder = configuration.getOutFolder();
+        if (outFolder.charAt(outFolder.length() - 1) != '/') {
+            outFolder = outFolder + "/";
+        }
+        return String.format("%s%s_rockets.xyz", outFolder, configuration.getName());
+    }
+
     public void save(List<Particle> particles) {
-        try (FileWriter fw = new FileWriter(getOutputFileName(), true);) {
+        try (FileWriter fw = new FileWriter(getOutputFileName(), true)) {
 
             // Format: x y VX VY radio R G B
-            String particleFormat = "%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n"; // TODO: check changing this to str builder
             PrintWriter pw = new PrintWriter(fw);
 
             // If we want to add extra data, they should go here between the \n as to not affect the ovito output
@@ -137,7 +155,29 @@ public class MarsSimulation {
         }
     }
 
-    public Particle createRocket(Particle sun, Particle earth) {
+    public void saveRocketsData(List<Particle> particles) {
+        try (FileWriter fw = new FileWriter(getRocketOutputFileName(), true)) {
+
+            // Format: x y VX VY radio R G B
+            PrintWriter pw = new PrintWriter(fw);
+
+            // If we want to add extra data, they should go here between the \n as to not affect the ovito output
+            pw.printf(Locale.US, "%d\n%f\n", particles.size(), time);
+
+            for (Particle p : particles.stream().filter(p-> p.getParticleName() == ParticleNames.ROCKET).collect(Collectors.toList())) {
+                Rocket r = (Rocket) p;
+                StringBuilder str = new StringBuilder();
+                str.append(r.getCreationTime()).append("\t").append(r.getMinMarsDistance()).append("\n");
+                pw.printf(Locale.US, str.toString());
+            }
+
+        } catch (IOException ex) {
+            System.out.println("Unable to save, reason: " + ex.getMessage());
+        }
+
+    }
+
+    public Particle createRocket(Particle earth) {
         double xt = earth.getPosition().getX();
         double yt = earth.getPosition().getY();
         double alpha = Math.atan2(yt, xt); // radians
@@ -153,7 +193,6 @@ public class MarsSimulation {
         double vxt = earth.getSpeed().getX();
         double vyt = earth.getSpeed().getY();
 
-        double earthV = Math.sqrt(vxt * vxt + vyt * vyt);
         double totalVelocity = Constants.RocketConstants.rocketVelocity
                 + Constants.RocketConstants.spaceStationVelocity;
 
@@ -164,7 +203,7 @@ public class MarsSimulation {
         vxRocket = Math.signum(vxt) * Math.abs(vxRocket);
         vyRocket = Math.signum(vyt) * Math.abs(vyRocket);
 
-        
+
         vxRocket += vxt;
         vyRocket += vyt;
 //        System.out.println("Before");
@@ -177,14 +216,12 @@ public class MarsSimulation {
 //        System.out.println("Tierra");
 //        System.out.printf("x: %f - y: %f - vx: %f - vy: %f\n", xt, yt, vxt, vyt);
 
-        Particle rocket = new Particle(ParticleNames.ROCKET, xRocket, yRocket, vxRocket, vyRocket,
+        return new Rocket(ParticleNames.ROCKET, xRocket, yRocket, vxRocket, vyRocket,
                 Constants.RocketConstants.rocketMass,
                 Constants.RocketConstants.RADIUS,
                 Constants.RocketConstants.VISUALIZATION_RADIUS,
                 0, 0, 0.5
         );
-        return rocket;
-
     }
 
     private StringBuilder particleStr(Particle p) {

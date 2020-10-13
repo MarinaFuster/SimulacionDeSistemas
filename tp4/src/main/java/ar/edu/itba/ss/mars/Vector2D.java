@@ -46,6 +46,10 @@ public class Vector2D {
         return Math.pow(x - other.x, 2) + Math.pow(y - other.y, 2);
     }
 
+    public double module() {
+        return Math.sqrt(x*x+y*x);
+    }
+
     @Override
     public String toString() {
         return String.format("(%.2f, %.2f)", x, y);

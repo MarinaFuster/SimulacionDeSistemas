@@ -56,11 +56,8 @@ public class App {
 
         double secondsInAYear = 3.154 * Math.pow(10,7);
         double secondsInADay = 60*60*24;
-        builder.deltaT(50).cutoffTime(secondsInAYear * 3).name("rocket").saveFrequency(1000);
-        System.out.println(secondsInAYear);
-//        builder.deltaT(50).cutoffTime(secondsInAYear).name("orbit").saveFrequency(31540);
+        builder.deltaT(50).cutoffTime(secondsInAYear * 2 + secondsInADay * 90).name("mission_mars").saveFrequency(1000);
         MarsSimulation simulation = new MarsSimulation(builder.get());
-
         simulation.run();
     }
 }
