@@ -94,7 +94,6 @@ public class MarsSimulation {
                 particles.add(createRocket(earth));
             }
 
-
             for (Particle p : particles) {
                 if(p.getParticleName() != ParticleNames.SUN) {
                     p.applyIntegrator(configuration.getIntegrator(), configuration.getDeltaT(), particles);

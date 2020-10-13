@@ -2,6 +2,9 @@ import numpy as np
 from enum import Enum
 from glob import glob
 
+import matplotlib.pyplot as plt
+import matplotlib.ticker as mtick
+
 class DynamicInputState(Enum):
     START = 1
     COMMENT = 2
