@@ -82,10 +82,10 @@ public class MarsSimulation {
 //        double rocketFrequency = 1;
 
         // Estos datos son para mandar un cohete por dia durante toda la simulacion
-        // (runtime ~
+        // (runtime ~1 hora y media
         double rocketStart = 0;
         double rocketEnd = Double.MAX_VALUE;
-        double rocketFrequency = secondsInDay / 50;
+        double rocketFrequency = secondsInDay / configuration.getDeltaT();
 
         // Calculate R(t+1) and V(t+1)
         while(time <= configuration.getCutoffTime()) {
