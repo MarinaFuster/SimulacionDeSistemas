@@ -5,17 +5,16 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MarsSimulation {
 
     private final MarsConfiguration configuration;
     public static double time = 0;
-    public static Particle mars, earth, sun;
-
+    public static Particle mars, earth, sun, jupiter;
+    public static Particle targetPlanet;
+    public static boolean crashed = false;
 
     public MarsSimulation(MarsConfiguration configuration) {
         this.configuration = configuration;
@@ -26,6 +25,7 @@ public class MarsSimulation {
 
         try {
             Files.deleteIfExists(Paths.get(getOutputFileName()));
+            Files.deleteIfExists(Paths.get(getRocketOutputFileName()));
         } catch (IOException e) {
             System.out.println("Unable to delete previously existing dynamic config");
         }
@@ -33,82 +33,86 @@ public class MarsSimulation {
         // Initialize Particles
         // First doing this for just sun and earth
         List<Particle> particles = new LinkedList<>();
-        earth = new Particle(
-                ParticleNames.EARTH,
-                Constants.EarthConstants.STARTX,
-                Constants.EarthConstants.STARTY,
-                Constants.EarthConstants.STARTVX,
-                Constants.EarthConstants.STARTVY,
-                Constants.EarthConstants.MASS,
-                Constants.EarthConstants.RADIUS,
-                Constants.EarthConstants.VISUALIZATION_RADIUS,
-                0,1,0);
 
-        mars = new Particle(
-                ParticleNames.MARS,
-                Constants.MarsConstants.STARTX,
-                Constants.MarsConstants.STARTY,
-                Constants.MarsConstants.STARTVX,
-                Constants.MarsConstants.STARTVY,
-                Constants.MarsConstants.MASS,
-                Constants.MarsConstants.RADIUS,
-                Constants.MarsConstants.VISUALIZATION_RADIUS,
-                1,0,0);
 
-        sun = new Particle(ParticleNames.SUN,
-                0,0,0,0,
-                Constants.SunConstants.MASS,
-                Constants.SunConstants.RADIUS,
-                Constants.SunConstants.VISUALIZATION_RADIUS,
-                1, 1, 0);
 
+        earth   = createPlanet(Constants.EarthConstants.class);
+        mars    = createPlanet(Constants.MarsConstants.class);
+        jupiter = createPlanet(Constants.JupiterConstants.class);
+        sun     = createPlanet(Constants.SunConstants.class);
         particles.add(earth);
         particles.add(mars);
         particles.add(sun);
+        particles.add(jupiter);
 
+        targetPlanet = jupiter;
+
+
+        boolean stopOnCrash = false;
         int iteration = 0;
-
-
-//        particles.add(createRocket(sun, earth));
-
-//        save(particles);
         double secondsInHour = 60*60;
         double secondsInDay = 60*60*24;
         double secondsInAYear = 3.154 * Math.pow(10,7);
 
-        // Estos datos son para deltaT = 50 para el segundo grafico de dincaia vs tiempo de lanzamiento
-//        double rocketStart = secondsInAYear * 2 - secondsInDay * 21;
-//        double rocketEnd = secondsInAYear * 2 - secondsInDay * 19;
+
+        // Estos datos son para deltaT = 50 para jugar un poco
+//        double rocketStart = 3;
+//        double rocketEnd =   0;
 //        double rocketFrequency = 1;
+//        stopOnCrash = false;
+
+        // Estos datos son para deltaT = 50 para que haya 1 solo cohete en la fecha de la distancia minima
+        double rocketStart = 1.7736E7;
+        double rocketEnd =   1.7736E7;
+        double rocketFrequency = 1;
+        stopOnCrash = true;
+
+//         Estos datos son para deltaT = 50 para el segundo grafico de dincaia vs tiempo de lanzamiento
+//        double rocketStart = secondsInDay * 203;
+//        double rocketEnd = secondsInDay * 207;
+//        double rocketFrequency = 60;
+//        stopOnCrash = false;
 
         // Estos datos son para mandar un cohete por dia durante toda la simulacion
-        // (runtime ~1 hora y media
-        double rocketStart = 0;
-        double rocketEnd = Double.MAX_VALUE;
-        double rocketFrequency = secondsInDay / configuration.getDeltaT();
+        // (runtime ~1 hora y mediaporque
+//        double rocketStart = 0;
+//        double rocketEnd = configuration.getCutoffTime();
+//        double rocketFrequency = (secondsInDay) / configuration.getDeltaT();
+
+        // To optimize mars calculation distance
+        List<Particle> planets = new ArrayList<>(particles);
+        List<Rocket> rockets = new ArrayList<>(Math.max((int)((rocketEnd - rocketStart) / rocketFrequency + 1), 0));
+
+
+        save(particles);
 
         // Calculate R(t+1) and V(t+1)
         while(time <= configuration.getCutoffTime()) {
-
+            if (stopOnCrash && crashed) {
+                System.out.println("Stopping on crash");
+                break;
+            }
             if (time >= rocketStart && time <= rocketEnd && iteration % rocketFrequency == 0) {
-                particles.add(createRocket(earth));
+                Particle r = createRocket(earth);
+                particles.add(r);
+                rockets.add((Rocket)r);
             }
 
-            for (Particle p : particles) {
+            particles.parallelStream().forEach(p -> {
                 if(p.getParticleName() != ParticleNames.SUN) {
                     p.applyIntegrator(configuration.getIntegrator(), configuration.getDeltaT(), particles);
                 }
-            }
+            }) ;
 
             // Apply the previously  calculated speeds and positions
-            for (Particle p : particles) {
-                p.applyChanges();
-            }
+            planets.stream().forEach(Particle::applyChanges);
+            rockets.parallelStream().forEach(Particle::applyChanges);
+
 
             time += configuration.getDeltaT();
             iteration++;
 
-            if (time >= rocketStart && iteration % configuration.getSaveFrequency() == 0) {
+            if (iteration % configuration.getSaveFrequency() == 0) {
                 save(particles);
             }
         }
@@ -143,7 +147,7 @@ public class MarsSimulation {
             PrintWriter pw = new PrintWriter(fw);
 
             // If we want to add extra data, they should go here between the \n as to not affect the ovito output
-            pw.printf(Locale.US, "%d\n%f\n", particles.size(), time);
+            pw.printf(Locale.US, "%d\n%f\t%d\n", particles.size(), time, (int)(time / (60*60*24)));
 
             for (Particle p : particles) {
                 pw.printf(Locale.US, particleStr(p).toString());
@@ -166,7 +170,7 @@ public class MarsSimulation {
             for (Particle p : particles.stream().filter(p-> p.getParticleName() == ParticleNames.ROCKET).collect(Collectors.toList())) {
                 Rocket r = (Rocket) p;
                 StringBuilder str = new StringBuilder();
-                str.append(r.getCreationTime()).append("\t").append(r.getMinMarsDistance()).append("\n");
+                str.append(r.getCreationTime()).append("\t").append(r.getMinTargetDistance()).append("\t").append((int)(r.getCreationTime() / (60*60*24))).append("\n");
                 pw.printf(Locale.US, str.toString());
             }
 
@@ -176,11 +180,37 @@ public class MarsSimulation {
 
     }
 
+    public Particle createPlanet(Class constantsClass) {
+        try {
+            double mass = constantsClass.getField("MASS").getDouble(null);
+            double radius = constantsClass.getField("RADIUS").getDouble(null);
+            double visualization_radius = constantsClass.getField("VISUALIZATION_RADIUS").getDouble(null);
+            double x = constantsClass.getField("STARTX").getDouble(null);
+            double y = constantsClass.getField("STARTY").getDouble(null);
+            double vx = constantsClass.getField("STARTVX").getDouble(null);
+            double vy = constantsClass.getField("STARTVY").getDouble(null);
+            ParticleNames name = (ParticleNames) constantsClass.getField("name").get(null);
+            double r = constantsClass.getField("r").getDouble(null);
+            double g = constantsClass.getField("g").getDouble(null);
+            double b = constantsClass.getField("b").getDouble(null);
+
+            System.out.println("name " + name + ". mass: " + mass);
+
+            return new Particle(name, x, y, vx, vy, mass, radius, visualization_radius, r, g, b);
+        } catch (NoSuchFieldException | IllegalStateException | IllegalAccessException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+
+
+    }
+
     public Particle createRocket(Particle earth) {
         double xt = earth.getPosition().getX();
         double yt = earth.getPosition().getY();
         double alpha = Math.atan2(yt, xt); // radians
         double beta = (Math.PI / 2) - alpha;
+        double rocketV0 = Constants.RocketConstants.rocketVelocity;
 
         double totalDistance = Constants.RocketConstants.spaceStationDistance
                 + Constants.EarthConstants.RADIUS
@@ -192,7 +222,7 @@ public class MarsSimulation {
         double vxt = earth.getSpeed().getX();
         double vyt = earth.getSpeed().getY();
 
-        double totalVelocity = Constants.RocketConstants.rocketVelocity
+        double totalVelocity = rocketV0
                 + Constants.RocketConstants.spaceStationVelocity;
 
         double vxRocket = totalVelocity * Math.cos(beta);
@@ -219,7 +249,7 @@ public class MarsSimulation {
                 Constants.RocketConstants.rocketMass,
                 Constants.RocketConstants.RADIUS,
                 Constants.RocketConstants.VISUALIZATION_RADIUS,
-                0, 0, 0.5
+                1,1,1
         );
     }
 

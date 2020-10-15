@@ -4,5 +4,6 @@ public enum ParticleNames {
     EARTH,
     SUN,
     MARS,
-    ROCKET
+    ROCKET,
+    JUPITER,
 }

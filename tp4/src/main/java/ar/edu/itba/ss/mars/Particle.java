@@ -79,7 +79,7 @@ public class Particle {
     }
 
     public void applyIntegrator(Integrator integrator, double deltaT, List<Particle> actingParticles) {
-        actingParticles = actingParticles.stream().filter(p-> p.name != name && p.name != ParticleNames.ROCKET)
+        actingParticles = actingParticles.parallelStream().filter(p-> p.name != name && p.name != ParticleNames.ROCKET)
                 .collect(Collectors.toList());
         switch (integrator) {
             case VERLET:
