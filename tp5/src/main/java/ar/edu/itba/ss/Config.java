@@ -15,7 +15,7 @@ public class Config {
     private final double goalX;  // [m] X we need to reach for the goal
     private final double goalY;
     private final double startY;
-    private final double startX = 0;
+    private final double startX;
 
     private final double pedestrianToFirstObstacleDistance;
     private final double lastObstacleToGoalDistance;
@@ -43,7 +43,8 @@ public class Config {
         return idealAccelerationTime;
     }
 
-    public Config(double idealAccelerationTime, double maxY, double obstacleRadius, double pedestrianRadius, double obstacleSpeed, double goalX, double goalY, double startY, double pedestrianToFirstObstacleDistance, double lastObstacleToGoalDistance, double cutoffTime, double deltaT, int saveFrequency, String name, String outFolder, double maxVelocity, double desiredVelocity, double safeWallDistance, double wallSteepness, double safePedestrianDistance, double anticipationTime, int collisionsToKeep, double dmin, double dmid, double dmax) {
+    public Config(double startX, double idealAccelerationTime, double maxY, double obstacleRadius, double pedestrianRadius, double obstacleSpeed, double goalX, double goalY, double startY, double pedestrianToFirstObstacleDistance, double lastObstacleToGoalDistance, double cutoffTime, double deltaT, int saveFrequency, String name, String outFolder, double maxVelocity, double desiredVelocity, double safeWallDistance, double wallSteepness, double safePedestrianDistance, double anticipationTime, int collisionsToKeep, double dmin, double dmid, double dmax) {
+        this.startX = startX;
         this.idealAccelerationTime = idealAccelerationTime;
         this.maxY = maxY;
         this.obstacleRadius = obstacleRadius;

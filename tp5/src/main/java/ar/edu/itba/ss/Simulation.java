@@ -15,7 +15,7 @@ public class Simulation {
     public static Config config;
     public static double time = 0;
     public static Particle goal;
-    public static List<Particle> obstacles;
+    public static List<Obstacle> obstacles;
 
 
 
@@ -36,14 +36,14 @@ public class Simulation {
 
 
         Pedestrian pedestrian = new Pedestrian(new Vector2D(config.getStartX(), config.getStartY()), config.getPedestrianRadius());
-        List<Obstacle> obstacles = initializeObstacles();
+        obstacles = initializeObstacles();
 
         int iteration = 0;
 
         // Save initial state
         save(obstacles, pedestrian);
 
-        while(time < config.getCutoffTime()) {
+        while(time < config.getCutoffTime() && !pedestrian.reachedObjective) {
             // Advance obstacles
 
             pedestrian.advance(config.getDeltaT());
@@ -58,6 +58,7 @@ public class Simulation {
                 save(obstacles, pedestrian);
             }
         }
+        System.out.println("Max velocity: " + pedestrian.maxVelocity);
 
     }
 

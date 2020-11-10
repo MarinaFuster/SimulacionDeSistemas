@@ -41,7 +41,7 @@ public class Vector2D {
     }
 
     public double module() {
-        return Math.sqrt(x*x+y*x);
+        return Math.sqrt(x*x+y*y);
     }
 
     @Override

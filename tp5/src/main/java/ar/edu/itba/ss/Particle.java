@@ -7,7 +7,6 @@ public class Particle {
     private double radius;
     private final double r,g,b;
 
-
     public Particle(Vector2D position, Vector2D speed, double radius, double r, double g, double b) {
         this.position = position;
         this.speed = speed;

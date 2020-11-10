@@ -6,10 +6,14 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 public class Pedestrian extends Particle{
+
+    private double mass = 60;
     public Pedestrian(Vector2D position, double radius) {
         super(position, new Vector2D(0,0), radius, 1, 1, 1);
     }
 
+    public double maxVelocity = 0;
+    public boolean reachedObjective = false;
 
 
 
@@ -24,15 +28,44 @@ public class Pedestrian extends Particle{
         for (Vector2D force : actingForces) {
             forcesSum = forcesSum.add(force);
         }
-        System.out.println("Acting forces: " + forcesSum);
-        Vector2D vDes = getSpeed().add(forcesSum.mul(deltaT));
 
+        double uMax = Simulation.config.getMaxVelocity();
+        Vector2D vDes = getSpeed().add(forcesSum.mul(deltaT / mass));
+        if (vDes.module() > uMax) {
+            vDes = vDes.mul(uMax/ vDes.module());
+        }
         PriorityQueue<Collision> futureCollisions = getFutureCollisions(vDes);
 
-        
+        Vector2D obstaclesForces = new Vector2D(0,0);
 
-        Vector2D newPosition = getPosition().add(vDes.mul(deltaT));
-        setPosition(newPosition);
+        int i = 0;
+
+        int[] weights = new int[Simulation.config.getCollisionsToKeep()];
+        // TODO: Esto puede esta rmal
+        for (int j = 0; j < weights.length; j++) {
+            weights[i] = Simulation.config.getCollisionsToKeep() - i;
+        }
+        while ((!futureCollisions.isEmpty()) && (i < Simulation.config.getCollisionsToKeep())) {
+            Collision c = futureCollisions.poll();
+            assert c != null;
+            obstaclesForces = obstaclesForces.add(getPedestrianForce(c, vDes).mul(weights[i]));
+            i++;
+        }
+
+
+        Vector2D totalForces = forcesSum.add(obstaclesForces);
+
+        // Verlet - Euler modificado
+        setSpeed(getSpeed().add(totalForces.mul(deltaT/mass)));
+        if (getSpeed().module() > uMax) {
+            setSpeed(getSpeed().mul(uMax/ getSpeed().module()));
+        }
+        setPosition(getPosition().add(getSpeed().mul(deltaT)).add(totalForces.mul(deltaT*deltaT/(2*mass))));
+
+        if (getPosition().distance(Simulation.goal.getPosition()) < getRadius()) {
+            reachedObjective = true;
+        }
+        maxVelocity = Math.max(maxVelocity, getSpeed().module());
     }
 
     private PriorityQueue<Collision> getFutureCollisions(Vector2D vDes) {
@@ -77,6 +110,8 @@ public class Pedestrian extends Particle{
                 //If the equation has no solution or a single solution, then no collision takes place
             }
         }
+
+        return futureCollisions;
     }
 
     public Vector2D getGoalForce() {
@@ -99,17 +134,21 @@ public class Pedestrian extends Particle{
 
         List<Vector2D> forces = new ArrayList<>(2);
 
-        Vector2D nUpper = new Vector2D(0, -1);
-        Vector2D nLower = new Vector2D(0, 1);
+        Vector2D nUpper = new Vector2D(0, 1);
+        Vector2D nLower = new Vector2D(0, -1);
+        Vector2D nLeft = new Vector2D(-1, 0);
+        Vector2D nRight = new Vector2D(1, 0);
 
         double diLower = getPosition().getY();
         double diUpper = Simulation.config.getMaxY() - getPosition().getY();
 
-        // Upper wall
-        addWallForce(ds, forces, nUpper, diUpper);
 
-        // Lower wall
+        double diLeft  = getPosition().getX();
+        double diRight = Simulation.goal.getPosition().getX() - getPosition().getX();
+        addWallForce(ds, forces, nUpper, diUpper);
         addWallForce(ds, forces, nLower, diLower);
+        addWallForce(ds, forces, nLeft, diLeft);
+        addWallForce(ds, forces, nRight, diRight);
         return forces;
     }
 
@@ -119,6 +158,39 @@ public class Pedestrian extends Particle{
             forces.add(n.mul(magnitude));
         } else {
             forces.add(new Vector2D(0,0));
+        }
+
+    }
+
+    private Vector2D getPedestrianForce(Collision collision, Vector2D vDes) {
+        Particle o = collision.getParticle();
+        Vector2D ci = getPosition().add(vDes.mul(collision.getTime()));
+        Vector2D cj = o.getPosition().add(o.getSpeed().mul(collision.getTime()));
+        Vector2D n = ci.sub(cj).mul(1/(ci.distance(cj)));
+
+
+        double forceMultiplier = 0.5;
+        double D = ci.distance(getPosition()) + ci.distance(cj) - getRadius() - o.getRadius();
+        return n.mul(forceMultiplier * getEvasiveForceMagnitude(D));
+
+    }
+
+    private double getEvasiveForceMagnitude(double distance) {
+        double a = 5; // Va a haber que sacarlo de config
+        double dmin = Simulation.config.getDmin();
+        double dmid = Simulation.config.getDmid();
+        double dmax = Simulation.config.getDmax();
+        if (distance < dmin) {
+//            System.out.println(a * dmin * dmin / (distance * distance));
+            return a * dmin * dmin / (distance * distance);
+        } else if ( distance < dmid) {
+            return a;
+        } else if ( distance < dmax){
+            double m = a / (dmid - dmax);
+            double b = (-1) * a  * dmax / (dmid - dmax);
+            return  m* distance + b;
+        } else {
+            return 0;
         }
     }
 }

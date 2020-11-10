@@ -2,35 +2,38 @@ package ar.edu.itba.ss;
 
 public class ConfigBuilder {
     private double maxY = 40;
-    private double obstacleRadius = 1;
+    private double obstacleRadius = 0.5;
     private double pedestrianRadius = 1;
-    private double obstacleSpeed = 1;
+    private double obstacleSpeed = 0.5;
     private double goalX = 80;
     // Default initial Y will be from pedestrianRandom/2 to maxY - pedestrianRadius / 2
     private double goalY = Math.random() * (maxY - 2 * pedestrianRadius) + (pedestrianRadius);
-    private double startY = Math.random() * (maxY - 2 * pedestrianRadius) + (pedestrianRadius);;
+
     private double pedestrianToFirstObstacleDistance = 5;
     private double lastObstacleToGoalDistance = 5;
     private double cutoffTime = 1000;
-    private double deltaT = 0.2;
-    private int saveFrequency = 5;
+    private double deltaT = 0.005;
+    private int saveFrequency = 200;
     private String name = "unnamed";
     private String outFolder = "./output/";
 
 
-    private double maxVelocity = 8;
-    private double desiredVelocity = 1;
+    private double maxVelocity = 1;
+    private double desiredVelocity = 0.8;
     private double idealAccelerationTime = 0.3; // TODO Ver si queda asi
-    private double safeWallDistance = 0.2;
-    private double wallSteepness = 1; // TODO Ver si cambiar esto arregla cosas
+    private double safeWallDistance = 1;
+    private double wallSteepness = 2; // TODO Ver si cambiar esto arregla cosas
     private double safePedestrianDistance = pedestrianRadius * 1.3;
-    private double anticipationTime = 2; // TODO Ver si cambiar esto arregla cosas
-    private int collisionsToKeep = 3; // Tiene que estar entre 2 y 5
+    private double anticipationTime = 4; // TODO Ver si cambiar esto arregla cosas
+    private int collisionsToKeep = 5; // Tiene que estar entre 2 y 5
+
+    private double startX = safeWallDistance + pedestrianRadius / 2;
+    private double startY = Math.random() * (maxY - 2 * pedestrianRadius) + (pedestrianRadius);;
 
     // TODO Ver valores de estos
     private double dmin= 1;
-    private double dmid = 2;
-    private double dmax = 3;
+    private double dmid = 10;
+    private double dmax = 20;
 
     public ConfigBuilder maxY(double maxY) {
         this.maxY = maxY;
@@ -157,7 +160,13 @@ public class ConfigBuilder {
         return this;
     }
 
+    public ConfigBuilder startX(double startX) {
+        this.startX = startX;
+        return this;
+    }
+
+
     public Config createConfig() {
-        return new Config(idealAccelerationTime, maxY, obstacleRadius, pedestrianRadius, obstacleSpeed, goalX, goalY, startY, pedestrianToFirstObstacleDistance, lastObstacleToGoalDistance, cutoffTime, deltaT, saveFrequency, name, outFolder, maxVelocity, desiredVelocity, safeWallDistance, wallSteepness, safePedestrianDistance, anticipationTime, collisionsToKeep, dmin, dmid, dmax);
+        return new Config(startX, idealAccelerationTime, maxY, obstacleRadius, pedestrianRadius, obstacleSpeed, goalX, goalY, startY, pedestrianToFirstObstacleDistance, lastObstacleToGoalDistance, cutoffTime, deltaT, saveFrequency, name, outFolder, maxVelocity, desiredVelocity, safeWallDistance, wallSteepness, safePedestrianDistance, anticipationTime, collisionsToKeep, dmin, dmid, dmax);
     }
 }
