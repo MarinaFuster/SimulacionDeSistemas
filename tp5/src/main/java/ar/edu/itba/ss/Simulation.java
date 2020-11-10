@@ -14,11 +14,15 @@ public class Simulation {
     // Static so it is accessible by the pedestrians methods just in case
     public static Config config;
     public static double time = 0;
+    public static Particle goal;
+    public static List<Particle> obstacles;
 
 
 
     public Simulation(Config config) {
         Simulation.config = config;
+        goal = new Particle(new Vector2D(config.getGoalX(),
+                config.getGoalY()), new Vector2D(0,0), config.getPedestrianRadius(), 0,0, 1);
     }
 
     public void run() {
@@ -41,9 +45,12 @@ public class Simulation {
 
         while(time < config.getCutoffTime()) {
             // Advance obstacles
+
+            pedestrian.advance(config.getDeltaT());
             for (Obstacle obstacle: obstacles) {
                 obstacle.advance(config.getDeltaT());
             }
+
             time += config.getDeltaT();
             iteration++;
 
@@ -66,7 +73,8 @@ public class Simulation {
         while (obstacleX < (config.getGoalX() - config.getLastObstacleToGoalDistance())) {
             double speedDirection = Math.random() > 0.5? 1 : -1;
             Vector2D initialSpeed = new Vector2D(0, config.getObstacleSpeed() * speedDirection);
-            Vector2D initialPosition = new Vector2D(obstacleX, Math.random() * config.getMaxY());
+            Vector2D initialPosition = new Vector2D(obstacleX,
+                    Math.random() * (config.getMaxY() - 2 * config.getObstacleRadius()) + config.getObstacleRadius());
 
             obstacles.add(new Obstacle(initialPosition, initialSpeed, config.getObstacleRadius()));
             obstacleX = getNextObstacleX(obstacleX);
@@ -75,9 +83,8 @@ public class Simulation {
     }
 
     public double getNextObstacleX(double lastObstacleX ) {
-        // The distance between obstacles will be (2 * radius ; 2 * radius  + r)
         double r = config.getObstacleRadius();
-        return lastObstacleX + Math.random() * (r) + (2 * r);
+        return lastObstacleX + Math.random() * (r) + (3 * r);
     }
 
     public void save(List<Obstacle> obstacles, Pedestrian pedestrian) {
@@ -90,11 +97,10 @@ public class Simulation {
             pw.printf(Locale.US, "%d\n\n", obstacles.size() + 2);
 
             // Write Pedestrian and target
-            Particle target = new Particle(new Vector2D(config.getGoalX(),
-                    config.getGoalY()), new Vector2D(0,0), config.getPedestrianRadius(), 0,0, 1);
+
 
             pw.printf(Locale.US, particleStr(pedestrian).toString());
-            pw.printf(Locale.US, particleStr(target).toString());
+            pw.printf(Locale.US, particleStr(goal).toString());
             for (Obstacle obstacle : obstacles) {
                 pw.printf(Locale.US, particleStr(obstacle).toString());
             }

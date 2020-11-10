@@ -26,7 +26,25 @@ public class Config {
     private final String name;
     private final String outFolder;
 
-    public Config(double maxY, double obstacleRadius, double pedestrianRadius, double obstacleSpeed, double goalX, double goalY, double startY, double pedestrianToFirstObstacleDistance, double lastObstacleToGoalDistance, double cutoffTime, double deltaT, int saveFrequency, String name, String outFolder) {
+    private final double maxVelocity; // Velocidad maxima del pedestrian
+    private final double desiredVelocity; // Velocidad deseada del pedestrian (sin obstaculos)
+    private final double idealAccelerationTime; // Tiempo que tarda en llegar a desiredVelocity
+    private final double safeWallDistance; // Distancia segura del pedestrian y las paredes
+    private final double wallSteepness; // "Steepness de las paredes"
+    private final double safePedestrianDistance; // radio psicologico
+    private final double anticipationTime;
+    private final int collisionsToKeep;
+
+
+    private final double dmin, dmid, dmax; // Parametros para la funcion de repulsion entre pedestrian y obstaculos
+
+
+    public double getIdealAccelerationTime() {
+        return idealAccelerationTime;
+    }
+
+    public Config(double idealAccelerationTime, double maxY, double obstacleRadius, double pedestrianRadius, double obstacleSpeed, double goalX, double goalY, double startY, double pedestrianToFirstObstacleDistance, double lastObstacleToGoalDistance, double cutoffTime, double deltaT, int saveFrequency, String name, String outFolder, double maxVelocity, double desiredVelocity, double safeWallDistance, double wallSteepness, double safePedestrianDistance, double anticipationTime, int collisionsToKeep, double dmin, double dmid, double dmax) {
+        this.idealAccelerationTime = idealAccelerationTime;
         this.maxY = maxY;
         this.obstacleRadius = obstacleRadius;
         this.pedestrianRadius = pedestrianRadius;
@@ -41,7 +59,18 @@ public class Config {
         this.saveFrequency = saveFrequency;
         this.name = name;
         this.outFolder = outFolder;
+        this.maxVelocity = maxVelocity;
+        this.desiredVelocity = desiredVelocity;
+        this.safeWallDistance = safeWallDistance;
+        this.wallSteepness = wallSteepness;
+        this.safePedestrianDistance = safePedestrianDistance;
+        this.anticipationTime = anticipationTime;
+        this.collisionsToKeep = collisionsToKeep;
+        this.dmin = dmin;
+        this.dmid = dmid;
+        this.dmax = dmax;
     }
+
 
     public double getMaxY() {
         return maxY;
@@ -101,6 +130,46 @@ public class Config {
 
     public String getOutFolder() {
         return outFolder;
+    }
+
+    public double getMaxVelocity() {
+        return maxVelocity;
+    }
+
+    public double getDesiredVelocity() {
+        return desiredVelocity;
+    }
+
+    public double getSafeWallDistance() {
+        return safeWallDistance;
+    }
+
+    public double getWallSteepness() {
+        return wallSteepness;
+    }
+
+    public double getSafePedestrianDistance() {
+        return safePedestrianDistance;
+    }
+
+    public double getAnticipationTime() {
+        return anticipationTime;
+    }
+
+    public int getCollisionsToKeep() {
+        return collisionsToKeep;
+    }
+
+    public double getDmin() {
+        return dmin;
+    }
+
+    public double getDmid() {
+        return dmid;
+    }
+
+    public double getDmax() {
+        return dmax;
     }
 }
 

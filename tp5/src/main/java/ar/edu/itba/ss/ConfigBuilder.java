@@ -1,26 +1,36 @@
 package ar.edu.itba.ss;
 
-import java.util.Random;
-
 public class ConfigBuilder {
-    private double maxY = 20;
+    private double maxY = 40;
     private double obstacleRadius = 1;
     private double pedestrianRadius = 1;
     private double obstacleSpeed = 1;
-    private double goalX = 50;
-
+    private double goalX = 80;
     // Default initial Y will be from pedestrianRandom/2 to maxY - pedestrianRadius / 2
-    private double goalY = Math.random() * (maxY - pedestrianRadius) + (pedestrianRadius / 2);
-    private double startY = Math.random() * (maxY - pedestrianRadius) + (pedestrianRadius / 2);;
-
+    private double goalY = Math.random() * (maxY - 2 * pedestrianRadius) + (pedestrianRadius);
+    private double startY = Math.random() * (maxY - 2 * pedestrianRadius) + (pedestrianRadius);;
     private double pedestrianToFirstObstacleDistance = 5;
     private double lastObstacleToGoalDistance = 5;
-
     private double cutoffTime = 1000;
-    private double deltaT = 1;
-    private int saveFrequency = 1;
+    private double deltaT = 0.2;
+    private int saveFrequency = 5;
     private String name = "unnamed";
-    private String outFolder = "./output/";;
+    private String outFolder = "./output/";
+
+
+    private double maxVelocity = 8;
+    private double desiredVelocity = 1;
+    private double idealAccelerationTime = 0.3; // TODO Ver si queda asi
+    private double safeWallDistance = 0.2;
+    private double wallSteepness = 1; // TODO Ver si cambiar esto arregla cosas
+    private double safePedestrianDistance = pedestrianRadius * 1.3;
+    private double anticipationTime = 2; // TODO Ver si cambiar esto arregla cosas
+    private int collisionsToKeep = 3; // Tiene que estar entre 2 y 5
+
+    // TODO Ver valores de estos
+    private double dmin= 1;
+    private double dmid = 2;
+    private double dmax = 3;
 
     public ConfigBuilder maxY(double maxY) {
         this.maxY = maxY;
@@ -34,6 +44,11 @@ public class ConfigBuilder {
 
     public ConfigBuilder pedestrianRadius(double pedestrianRadius) {
         this.pedestrianRadius = pedestrianRadius;
+        return this;
+    }
+
+    public ConfigBuilder idealAccelerationTime(double t) {
+        this.idealAccelerationTime = t;
         return this;
     }
 
@@ -92,7 +107,57 @@ public class ConfigBuilder {
         return this;
     }
 
+    public ConfigBuilder maxVelocity(double maxVelocity) {
+        this.maxVelocity = maxVelocity;
+        return this;
+    }
+
+    public ConfigBuilder desiredVelocity(double desiredVelocity) {
+        this.desiredVelocity = desiredVelocity;
+        return this;
+    }
+
+    public ConfigBuilder safeWallDistance(double safeWallDistance) {
+        this.safeWallDistance = safeWallDistance;
+        return this;
+    }
+
+    public ConfigBuilder wallSteepness(double wallSteepness) {
+        this.wallSteepness = wallSteepness;
+        return this;
+    }
+
+    public ConfigBuilder safePedestrianDistance(double safePedestrianDistance) {
+        this.safePedestrianDistance = safePedestrianDistance;
+        return this;
+    }
+
+    public ConfigBuilder anticipationTime(double anticipationTime) {
+        this.anticipationTime = anticipationTime;
+        return this;
+    }
+
+    public ConfigBuilder collisionsToKeep(int collisionsToKeep) {
+        this.collisionsToKeep = collisionsToKeep;
+        return this;
+    }
+
+    public ConfigBuilder dmin(double dmin) {
+        this.dmin = dmin;
+        return this;
+    }
+
+    public ConfigBuilder dmid(double dmid) {
+        this.dmid = dmid;
+        return this;
+    }
+
+    public ConfigBuilder dmax(double dmax) {
+        this.dmax = dmax;
+        return this;
+    }
+
     public Config createConfig() {
-        return new Config(maxY, obstacleRadius, pedestrianRadius, obstacleSpeed, goalX, goalY, startY, pedestrianToFirstObstacleDistance, lastObstacleToGoalDistance, cutoffTime, deltaT, saveFrequency, name, outFolder);
+        return new Config(idealAccelerationTime, maxY, obstacleRadius, pedestrianRadius, obstacleSpeed, goalX, goalY, startY, pedestrianToFirstObstacleDistance, lastObstacleToGoalDistance, cutoffTime, deltaT, saveFrequency, name, outFolder, maxVelocity, desiredVelocity, safeWallDistance, wallSteepness, safePedestrianDistance, anticipationTime, collisionsToKeep, dmin, dmid, dmax);
     }
 }

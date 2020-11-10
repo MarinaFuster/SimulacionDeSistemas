@@ -17,7 +17,6 @@ public class Particle {
         this.b = b;
     }
 
-
     public Vector2D getPosition() {
         return position;
     }

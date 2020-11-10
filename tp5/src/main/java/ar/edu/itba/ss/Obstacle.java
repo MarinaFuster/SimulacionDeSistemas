@@ -18,7 +18,7 @@ public class Obstacle extends Particle{
             setSpeed(new Vector2D(0, -1 * newSpeed));
         } else if(newY > maxY) {
             newY = 2 * maxY - newY;
-            setSpeed(new Vector2D(0, -1 * newSpeed));
+            setSpeed(new Vector2D(0, -1 * newSpeed)) ;
         }
         setPosition(new Vector2D(x, newY));
     }
