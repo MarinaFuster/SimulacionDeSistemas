@@ -46,17 +46,23 @@ public class Simulation {
         while(time < config.getCutoffTime() && !pedestrian.reachedObjective) {
             // Advance obstacles
 
+
             pedestrian.advance(config.getDeltaT());
             for (Obstacle obstacle: obstacles) {
                 obstacle.advance(config.getDeltaT());
             }
+
 
             time += config.getDeltaT();
             iteration++;
 
             if (iteration % config.getSaveFrequency() == 0) {
                 save(obstacles, pedestrian);
+                for (Obstacle o : obstacles) {
+                    o.setG(1);
+                }
             }
+
         }
         System.out.println("Max velocity: " + pedestrian.maxVelocity);
 

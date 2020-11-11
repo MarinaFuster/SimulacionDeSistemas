@@ -11,20 +11,20 @@ public class ConfigBuilder {
 
     private double pedestrianToFirstObstacleDistance = 5;
     private double lastObstacleToGoalDistance = 5;
-    private double cutoffTime = 1000;
+    private double cutoffTime = 10000;
     private double deltaT = 0.005;
     private int saveFrequency = 200;
     private String name = "unnamed";
     private String outFolder = "./output/";
 
 
-    private double maxVelocity = 1;
-    private double desiredVelocity = 0.8;
+    private double maxVelocity = 2.2;
+    private double desiredVelocity = 1;
     private double idealAccelerationTime = 0.3; // TODO Ver si queda asi
     private double safeWallDistance = 1;
     private double wallSteepness = 2; // TODO Ver si cambiar esto arregla cosas
-    private double safePedestrianDistance = pedestrianRadius * 1.3;
-    private double anticipationTime = 4; // TODO Ver si cambiar esto arregla cosas
+    private double safePedestrianDistance = pedestrianRadius * 2;
+    private double anticipationTime = 10; // TODO Ver si cambiar esto arregla cosas
     private int collisionsToKeep = 5; // Tiene que estar entre 2 y 5
 
     private double startX = safeWallDistance + pedestrianRadius / 2;
@@ -32,8 +32,8 @@ public class ConfigBuilder {
 
     // TODO Ver valores de estos
     private double dmin= 1;
-    private double dmid = 10;
-    private double dmax = 20;
+    private double dmid = 5;
+    private double dmax = 10;
 
     public ConfigBuilder maxY(double maxY) {
         this.maxY = maxY;

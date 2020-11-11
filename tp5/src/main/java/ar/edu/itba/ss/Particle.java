@@ -5,7 +5,7 @@ public class Particle {
     private Vector2D position;
     private Vector2D speed;
     private double radius;
-    private final double r,g,b;
+    private double r,g,b;
 
     public Particle(Vector2D position, Vector2D speed, double radius, double r, double g, double b) {
         this.position = position;
@@ -52,6 +52,21 @@ public class Particle {
 
     public Particle setRadius(double radius) {
         this.radius = radius;
+        return this;
+    }
+
+    public Particle setR(double r) {
+        this.r = r;
+        return this;
+    }
+
+    public Particle setG(double g) {
+        this.g = g;
+        return this;
+    }
+
+    public Particle setB(double b) {
+        this.b = b;
         return this;
     }
 }

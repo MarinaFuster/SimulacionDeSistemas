@@ -47,6 +47,7 @@ public class Pedestrian extends Particle{
         }
         while ((!futureCollisions.isEmpty()) && (i < Simulation.config.getCollisionsToKeep())) {
             Collision c = futureCollisions.poll();
+            c.getParticle().setG(0);
             assert c != null;
             obstaclesForces = obstaclesForces.add(getPedestrianForce(c, vDes).mul(weights[i]));
             i++;
@@ -62,8 +63,11 @@ public class Pedestrian extends Particle{
         }
         setPosition(getPosition().add(getSpeed().mul(deltaT)).add(totalForces.mul(deltaT*deltaT/(2*mass))));
 
-        if (getPosition().distance(Simulation.goal.getPosition()) < getRadius()) {
-            reachedObjective = true;
+        Vector2D goalPosition = Simulation.goal.getPosition();
+        if (Math.abs(getPosition().getX() - goalPosition.getX()) <= getRadius()) {
+            if (Math.abs(getPosition().getY() - goalPosition.getY()) <= 3*getRadius()) {
+                reachedObjective = true;
+            }
         }
         maxVelocity = Math.max(maxVelocity, getSpeed().module());
     }
@@ -84,12 +88,11 @@ public class Pedestrian extends Particle{
 
              */
             double ro = Simulation.config.getSafePedestrianDistance();
-            Vector2D r = getPosition().sub(p.getPosition());
+            Vector2D r = p.getPosition().sub(getPosition());
             Vector2D v = vDes.sub(p.getSpeed());
             double a = v.getX() * v.getX() + v.getY() * v.getY();
-            double b = (-2) * r.getX() * v.getX() - 2 * r.getY() * v.getY();
+            double b = ((-2) * r.getX() * v.getX()) - (2 * r.getY() * v.getY());
             double c = r.getX() * r.getX() + r.getY() * r.getY() - Math.pow(ro + p.getRadius(), 2);
-
             double result = b*b - 4 * a * c;
             // Dos t
             if (result > 0) {
@@ -144,7 +147,7 @@ public class Pedestrian extends Particle{
 
 
         double diLeft  = getPosition().getX();
-        double diRight = Simulation.goal.getPosition().getX() - getPosition().getX();
+        double diRight = Simulation.goal.getPosition().getX() + 5 - getPosition().getX();
         addWallForce(ds, forces, nUpper, diUpper);
         addWallForce(ds, forces, nLower, diLower);
         addWallForce(ds, forces, nLeft, diLeft);
@@ -169,7 +172,7 @@ public class Pedestrian extends Particle{
         Vector2D n = ci.sub(cj).mul(1/(ci.distance(cj)));
 
 
-        double forceMultiplier = 0.5;
+        double forceMultiplier = 3;
         double D = ci.distance(getPosition()) + ci.distance(cj) - getRadius() - o.getRadius();
         return n.mul(forceMultiplier * getEvasiveForceMagnitude(D));
 
@@ -181,8 +184,7 @@ public class Pedestrian extends Particle{
         double dmid = Simulation.config.getDmid();
         double dmax = Simulation.config.getDmax();
         if (distance < dmin) {
-//            System.out.println(a * dmin * dmin / (distance * distance));
-            return a * dmin * dmin / (distance * distance);
+            return a  * dmin / (distance);
         } else if ( distance < dmid) {
             return a;
         } else if ( distance < dmax){
