@@ -101,7 +101,7 @@ public class Simulation {
             PrintWriter pw = new PrintWriter(fw);
 
             // If we want to add extra data, they should go here between the \n as to not affect the ovito output
-            pw.printf(Locale.US, "%d\n\n", obstacles.size() + 2);
+            pw.printf(Locale.US, "%d\n%f\n", obstacles.size() + 2, time);
 
             // Write Pedestrian and target
 

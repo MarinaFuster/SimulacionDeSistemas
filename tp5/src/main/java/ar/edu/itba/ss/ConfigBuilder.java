@@ -2,9 +2,9 @@ package ar.edu.itba.ss;
 
 public class ConfigBuilder {
     private double maxY = 40;
-    private double obstacleRadius = 0.5;
-    private double pedestrianRadius = 1;
-    private double obstacleSpeed = 0.5;
+    private double obstacleRadius = 1;
+    public double pedestrianRadius = 1;
+    private double obstacleSpeed = 1;
     private double goalX = 80;
     // Default initial Y will be from pedestrianRandom/2 to maxY - pedestrianRadius / 2
     private double goalY = Math.random() * (maxY - 2 * pedestrianRadius) + (pedestrianRadius);
@@ -19,7 +19,7 @@ public class ConfigBuilder {
 
 
     private double maxVelocity = 2.2;
-    private double desiredVelocity = 1;
+    private double desiredVelocity = 1.2;
     private double idealAccelerationTime = 0.3; // TODO Ver si queda asi
     private double safeWallDistance = 1;
     private double wallSteepness = 2; // TODO Ver si cambiar esto arregla cosas
