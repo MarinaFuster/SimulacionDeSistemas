@@ -66,9 +66,12 @@ def get_metrics(dynamic_input_path):
     # returns total simulation time, total distance and mean velocity
     return total_time, total_distance, np.array(v_modules).sum()/total_time, xs, ys
 
+prefix = [] # complete here with file prefixes
+
 def plot_several_runs(input_fodler):
-    filenames = np.sort(glob(f"{input_fodler}/*"))
-    print(filenames)
+    for pref in prefix:
+        filenames = np.sort(glob(f"{input_fodler}/{pref}*"))
+        print(filenames)
 
 def run_file_metrics():
     total_time, total_distance, mean_velocity, xs, ys = get_metrics("/home/marina/SimulacionDeSistemas/tp5/output/unnamed_dynamic.xyz")

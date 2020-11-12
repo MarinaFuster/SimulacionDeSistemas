@@ -16,8 +16,8 @@ public class App {
     }
 
     public static void runMultipleSimulations() {
-        double[] safe_radius = {0.05, 0.1, 0.5, 1, 1.5, 2, 2.5, 3};
-        int simulations_qty = 20;
+        double[] safe_radius = {0.1, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6};
+        int simulations_qty = 10;
 
         for(int i=0; i< safe_radius.length; i++) {
             for(int j=0; j<simulations_qty; j++) {

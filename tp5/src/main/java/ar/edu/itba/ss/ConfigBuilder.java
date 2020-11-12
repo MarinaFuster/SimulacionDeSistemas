@@ -19,7 +19,7 @@ public class ConfigBuilder {
 
 
     private double maxVelocity = 2.2;
-    private double desiredVelocity = 1.2;
+    private double desiredVelocity = 1.3;
     private double idealAccelerationTime = 0.3; // TODO Ver si queda asi
     private double safeWallDistance = 1;
     private double wallSteepness = 2; // TODO Ver si cambiar esto arregla cosas
