@@ -18,7 +18,7 @@ public class App {
     }
 
     public static void runMultipleSimulations() {
-        double[] safe_radius = {0.1, 0.5, 1.0, 1.5, 2.0, 2.5, 3, 3.5, 4};
+        double[] safe_radius = {0.1, 0.5, 1.0, 1.5, 2.0, 2.5, 3};
         int simulations_qty = 20;
 
         Simulation sim = new Simulation(new ConfigBuilder().createConfig());

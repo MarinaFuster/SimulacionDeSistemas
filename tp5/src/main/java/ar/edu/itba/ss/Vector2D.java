@@ -1,6 +1,6 @@
 package ar.edu.itba.ss;
 
-public class Vector2D {
+public class    Vector2D {
 
     private final double x;
     private final double y;

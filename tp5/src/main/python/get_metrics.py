@@ -5,6 +5,10 @@ import matplotlib.pyplot as plt
 from enum import Enum
 from glob import glob
 
+font = {'size'   : 13}
+
+plt.rc('font', **font)
+
 class DynamicInputState(Enum):
     START = 1
     COMMENT = 2
@@ -23,6 +27,8 @@ def get_metrics(dynamic_input_path):
     first_iteration = True
     first_particle = True
 
+    iterations = 0
+
     prev_x = 0 # for distance calculation
     prev_y = 0 # for distance calculation
 
@@ -36,6 +42,7 @@ def get_metrics(dynamic_input_path):
     with open(dynamic_input_path) as in_f:
         for line in in_f:
             if state == DynamicInputState.START:
+                iterations+=1
                 remaining = int(line)
                 state = DynamicInputState.COMMENT
             elif state == DynamicInputState.COMMENT:
@@ -64,9 +71,9 @@ def get_metrics(dynamic_input_path):
                     first_particle = True
 
     # returns total simulation time, total distance and mean velocity
-    return total_time, total_distance, np.array(v_modules).sum()/total_time, xs, ys
+    return total_time, total_distance, np.array(v_modules).sum()/iterations, xs, ys
 
-values = [0.1, 0.5, 1.0, 1.5, 2.0, 2.5, 3, 3.5, 4]
+values = [0.1, 0.5, 1.0, 1.5, 2.0, 2.5, 3]
 prefix = [] # complete here with file prefixes
 for val in values:
     prefix.append(f"sim_{val}")
@@ -125,27 +132,29 @@ def plot_several_runs(input_fodler):
     ax = plt.gca()
     ax.set_yscale('log')
     plt.errorbar(values, times_means, times_stds, color='blue', linestyle='None', solid_capstyle='projecting', capsize=5, marker='o')
-    plt.xlabel("Distancia psicofísica desde CM [m]")
+    plt.xlabel("Distancia psicofísica desde centro de masa [m]")
     plt.ylabel("Tiempo de Tránsito [s]")
-    plt.savefig("/home/marina/SimulacionDeSistemas/tp5/results/tiempos.png")
+    plt.savefig("/home/marina/SimulacionDeSistemas/tp5/results/tiempos_1.png")
 
     plt.clf()
     ax = plt.gca()
     ax.set_yscale('log')
     plt.errorbar(values, distances_means, distances_stds, color='blue', linestyle='None', solid_capstyle='projecting', capsize=5, marker='o')
-    plt.xlabel("Distancia psicofísica desde CM [m]")
+    plt.xlabel("Distancia psicofísica desde centro de masa [m]")
     plt.ylabel("Longitud del recorrido [m]")
-    plt.savefig("/home/marina/SimulacionDeSistemas/tp5/results/longitudes.png")
+    plt.savefig("/home/marina/SimulacionDeSistemas/tp5/results/longitudes_1.png")
 
     plt.clf()
     plt.errorbar(values, mean_velocities_means, mean_velocities_stds, color='blue', linestyle='None', solid_capstyle='projecting', capsize=5, marker='o')
-    plt.xlabel("Distancia psicofísica desde CM [m]")
+    plt.xlabel("Distancia psicofísica desde centro de masa [m]")
     plt.ylabel("Velocidad media [m/s]")
-    plt.savefig("/home/marina/SimulacionDeSistemas/tp5/results/velocidades.png")
+    plt.savefig("/home/marina/SimulacionDeSistemas/tp5/results/velocidades_1.png")
 
 
 def run_file_metrics():
-    total_time, total_distance, mean_velocity, xs, ys = get_metrics("/home/marina/SimulacionDeSistemas/tp5/output/unnamed_dynamic.xyz")
+    total_time, total_distance, mean_velocity, xs, ys = get_metrics(
+        "/home/marina/SimulacionDeSistemas/tp5/output/sim_0.5_16_dynamic.xyz"
+    )
 
     print("Total simulation time " + str(total_time))
     print("Total distance " + str(total_distance))
@@ -153,11 +162,17 @@ def run_file_metrics():
 
     # plots trajectory
     plt.clf()
+    ax = plt.gca()
+    plt.yticks(np.arange(0, 40, step=5))
+    ax.set_ylim(ymin=0)
+    ax.set_ylim(ymax=40)
     plt.plot(xs, ys, color='blue')
     plt.xlabel("x [m]")
     plt.ylabel("y [m]")
-    plt.savefig("/home/marina/SimulacionDeSistemas/tp5/results/trajectory.png")
+    plt.savefig("/home/marina/SimulacionDeSistemas/tp5/results/trajectory_0_5.png")
 
 
 
 plot_several_runs("/home/marina/SimulacionDeSistemas/tp5/output")
+
+#run_file_metrics()

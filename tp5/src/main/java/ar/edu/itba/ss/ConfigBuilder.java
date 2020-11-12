@@ -5,7 +5,7 @@ public class ConfigBuilder {
     private double obstacleRadius = 1;
     public double pedestrianRadius = 1;
     private double obstacleSpeed = 1;
-    private double goalX = 80;
+        private double goalX = 80;
     // Default initial Y will be from pedestrianRandom/2 to maxY - pedestrianRadius / 2
     private double goalY = Math.random() * (maxY - 2 * pedestrianRadius) + (pedestrianRadius);
 
