@@ -184,7 +184,9 @@ public class Pedestrian extends Particle{
         double dmid = Simulation.config.getDmid();
         double dmax = Simulation.config.getDmax();
         if (distance < dmin) {
-            return a  * dmin / (distance);
+            // return a  * dmin / (distance);
+            double k = a / Math.pow(2, -dmin);
+            return k * Math.pow(2, -distance);
         } else if ( distance < dmid) {
             return a;
         } else if ( distance < dmax){
