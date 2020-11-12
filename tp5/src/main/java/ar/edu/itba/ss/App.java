@@ -18,7 +18,7 @@ public class App {
     }
 
     public static void runMultipleSimulations() {
-        double[] safe_radius = {0.1, 0.5, 1.0, 1.5, 2.0, 2.5, 3};
+        double[] safe_radius = {0.1, 0.3, 0.8, 1.2, 1.7, 2.2, 2.6};
         int simulations_qty = 20;
 
         Simulation sim = new Simulation(new ConfigBuilder().createConfig());
@@ -32,8 +32,8 @@ public class App {
                 sim.obstacles = null;
 
                 ConfigBuilder cb = new ConfigBuilder();
-                cb.goalY(20); // fixed y for goal
-                cb.startY(30); // fixed y for pedestrian
+                cb.goalY(8); // fixed y for goal
+                cb.startY(5); // fixed y for pedestrian
                 cb.safePedestrianDistance(cb.pedestrianRadius + safe_radius[i]); // we update safe radius
 
                 // filename

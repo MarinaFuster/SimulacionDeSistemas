@@ -9,7 +9,13 @@ public class Pedestrian extends Particle{
 
     private double mass = 60;
     public Pedestrian(Vector2D position, double radius) {
+
         super(position, new Vector2D(0,0), radius, 1, 1, 1);
+        double v = Simulation.config.getDesiredVelocity();
+        double v0angle = (-20.0 / 180) * Math.PI;
+        double vx = v * Math.cos(v0angle);
+        double vy = v * Math.sin(v0angle);
+        setSpeed(new Vector2D(vx, vy));
     }
 
     public double maxVelocity = 0;
@@ -65,7 +71,7 @@ public class Pedestrian extends Particle{
 
         Vector2D goalPosition = Simulation.goal.getPosition();
         if (Math.abs(getPosition().getX() - goalPosition.getX()) <= getRadius()) {
-            if (Math.abs(getPosition().getY() - goalPosition.getY()) <= 3*getRadius()) {
+            if (Math.abs(getPosition().getY() - goalPosition.getY()) <= 5*getRadius()) {
                 reachedObjective = true;
             }
         }
