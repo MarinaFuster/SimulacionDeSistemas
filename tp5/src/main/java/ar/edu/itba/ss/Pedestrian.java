@@ -10,7 +10,7 @@ public class Pedestrian extends Particle{
     private double mass = 60;
     public Pedestrian(Vector2D position, double radius) {
 
-        super(position, new Vector2D(0,0), radius, 1, 1, 1);
+        super(position, new Vector2D(1,0), radius, 1, 1, 1);
         double v = Simulation.config.getDesiredVelocity();
         double v0angle = (-20.0 / 180) * Math.PI;
         double vx = v * Math.cos(v0angle);
