@@ -73,7 +73,7 @@ def get_metrics(dynamic_input_path):
     # returns total simulation time, total distance and mean velocity
     return total_time, total_distance, np.array(v_modules).sum()/iterations, xs, ys
 
-values = [0.1, 0.5, 1.0, 1.5, 2.0, 2.5, 3]
+values = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 prefix = [] # complete here with file prefixes
 for val in values:
     prefix.append(f"sim_{val}")
@@ -115,7 +115,7 @@ def plot_several_runs(input_fodler):
         mean_velocities_stds.append(np.array(pref_mean_velocities).std())
 
     for i in range(len(values)):
-        values[i] = values[i] + 1 # 1 is radius of pedestrian
+        values[i] = values[i] + 0.25 # 0.25 is radius of pedestrian
 
     # print(len(values))
     #
@@ -130,31 +130,29 @@ def plot_several_runs(input_fodler):
 
     plt.clf()
     ax = plt.gca()
-    ax.set_yscale('log')
+    #ax.set_yscale('log')
     plt.errorbar(values, times_means, times_stds, color='blue', linestyle='None', solid_capstyle='projecting', capsize=5, marker='o')
     plt.xlabel("Distancia psicofísica desde centro de masa [m]")
     plt.ylabel("Tiempo de Tránsito [s]")
-    plt.savefig("/home/marina/SimulacionDeSistemas/tp5/results/tiempos_1.png")
+    plt.savefig("/home/marina/SimulacionDeSistemas/tp5/results/tiempos.png", bbox_inches='tight')
 
     plt.clf()
     ax = plt.gca()
-    ax.set_yscale('log')
+    #ax.set_yscale('log')
     plt.errorbar(values, distances_means, distances_stds, color='blue', linestyle='None', solid_capstyle='projecting', capsize=5, marker='o')
     plt.xlabel("Distancia psicofísica desde centro de masa [m]")
     plt.ylabel("Longitud del recorrido [m]")
-    plt.savefig("/home/marina/SimulacionDeSistemas/tp5/results/longitudes_1.png")
+    plt.savefig("/home/marina/SimulacionDeSistemas/tp5/results/longitudes.png", bbox_inches='tight')
 
     plt.clf()
     plt.errorbar(values, mean_velocities_means, mean_velocities_stds, color='blue', linestyle='None', solid_capstyle='projecting', capsize=5, marker='o')
     plt.xlabel("Distancia psicofísica desde centro de masa [m]")
     plt.ylabel("Velocidad media [m/s]")
-    plt.savefig("/home/marina/SimulacionDeSistemas/tp5/results/velocidades_1.png")
+    plt.savefig("/home/marina/SimulacionDeSistemas/tp5/results/velocidades.png", bbox_inches='tight')
 
 
-def run_file_metrics():
-    total_time, total_distance, mean_velocity, xs, ys = get_metrics(
-        "/home/marina/SimulacionDeSistemas/tp5/output/sim_0.5_16_dynamic.xyz"
-    )
+def run_file_metrics(filename, output):
+    total_time, total_distance, mean_velocity, xs, ys = get_metrics(filename)
 
     print("Total simulation time " + str(total_time))
     print("Total distance " + str(total_distance))
@@ -163,16 +161,28 @@ def run_file_metrics():
     # plots trajectory
     plt.clf()
     ax = plt.gca()
-    plt.yticks(np.arange(0, 40, step=5))
+    plt.yticks(np.arange(0, 10, step=1))
     ax.set_ylim(ymin=0)
-    ax.set_ylim(ymax=40)
+    ax.set_ylim(ymax=10)
     plt.plot(xs, ys, color='blue')
     plt.xlabel("x [m]")
     plt.ylabel("y [m]")
-    plt.savefig("/home/marina/SimulacionDeSistemas/tp5/results/trajectory_0_5.png")
-
+    plt.savefig(output, bbox_inches='tight')
 
 
 plot_several_runs("/home/marina/SimulacionDeSistemas/tp5/output")
 
-#run_file_metrics()
+# for rho 0.25 + 0.1
+print("FOR RHO 0.35")
+run_file_metrics("/home/marina/SimulacionDeSistemas/tp5/output/sim_0.1_1_dynamic.xyz",
+                 "/home/marina/SimulacionDeSistemas/tp5/results/trajectory_035.png")
+
+# for rho 0.25 + 0.2
+print("FOR RHO 0.45")
+run_file_metrics("/home/marina/SimulacionDeSistemas/tp5/output/sim_0.2_4_dynamic.xyz",
+                 "/home/marina/SimulacionDeSistemas/tp5/results/trajectory_045.png")
+
+# for rho 0.25 + 1.0
+print("FOR RHO 1.25")
+run_file_metrics("/home/marina/SimulacionDeSistemas/tp5/output/sim_1.0_0_dynamic.xyz",
+                 "/home/marina/SimulacionDeSistemas/tp5/results/trajectory_125.png")

@@ -20,10 +20,10 @@ public class ConfigBuilder {
 
     private double maxVelocity = 1.8;
     private double desiredVelocity = 1.2;
-    private double idealAccelerationTime = 0.3; // TODO Ver si queda asi
+    private double idealAccelerationTime = 0.05; // TODO Ver si queda asi
     private double safeWallDistance = 0.5;
     private double wallSteepness = 2; // TODO Ver si cambiar esto arregla cosas
-    private double safePedestrianDistance = pedestrianRadius * 2;
+    private double safePedestrianDistance = 0.3;
     private double anticipationTime = 5; // TODO Ver si cambiar esto arregla cosas
     private int collisionsToKeep = 4; // Tiene que estar entre 2 y 5
 
