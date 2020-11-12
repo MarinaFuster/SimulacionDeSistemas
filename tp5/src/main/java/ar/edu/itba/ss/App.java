@@ -1,5 +1,7 @@
 package ar.edu.itba.ss;
 
+import java.util.List;
+
 public class App {
 
 
@@ -19,8 +21,16 @@ public class App {
         double[] safe_radius = {0.1, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6};
         int simulations_qty = 10;
 
+        Simulation sim = new Simulation(new ConfigBuilder().createConfig());
+
         for(int i=0; i< safe_radius.length; i++) {
             for(int j=0; j<simulations_qty; j++) {
+
+                sim.time = 0;
+                sim.config = null;
+                sim.goal = null;
+                sim.obstacles = null;
+
                 ConfigBuilder cb = new ConfigBuilder();
                 cb.goalY(20); // fixed y for goal
                 cb.startY(30); // fixed y for pedestrian
@@ -34,7 +44,8 @@ public class App {
                 sb.append(j);
                 cb.name(sb.toString());
 
-                Simulation sim = new Simulation(cb.createConfig());
+                sim = new Simulation(cb.createConfig());
+
                 sim.run();
             }
         }
